@@ -1,0 +1,175 @@
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  Stack,
+  Typography,
+} from "@mui/material";
+import useRegisterFormik from "../../hooks/useRegisterHook";
+import { useNavigate } from "react-router-dom";
+import InputFormik from "../../components/InputFormik";
+import SelectCountryCodes from "../../components/SelectCountryCodes";
+
+export default function RegisterScreen() {
+  const navigate = useNavigate();
+  const {
+    values,
+    loading,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+    handleSubmit,
+  } = useRegisterFormik();
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  return (
+    <Container
+      maxWidth={false}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "95vh",
+        width: "75%",
+        padding: 2,
+        gap: 1,
+      }}
+    >
+      <img
+        style={{ margin: "0 auto", width: 80 }}
+        alt="logo"
+        src={"/logo.png"}
+      />
+
+      <Typography
+        sx={{
+          color: "#0f0f0f",
+          fontWeight: 900,
+          fontSize: 25,
+          textAlign: "center",
+        }}
+      >
+        Registrar usuarios
+      </Typography>
+
+      <FormControl sx={{ width: "40%", margin: "0 auto", gap: 2 }}>
+        <InputFormik
+          label="Nombre"
+          name="name"
+          value={values.name}
+          error={!!touched.name && !!errors.name}
+          errorText={errors.name ?? ""}
+          handleChange={handleChange("name")}
+          handleBlur={handleBlur("name")}
+        />
+
+        <InputFormik
+          label="Apellido"
+          name="lastName"
+          value={values.lastName}
+          error={!!touched.lastName && !!errors.lastName}
+          errorText={errors.lastName ?? ""}
+          handleChange={handleChange("lastName")}
+          handleBlur={handleBlur("lastName")}
+        />
+
+        <InputFormik
+          label="Correo"
+          name="email"
+          value={values.email}
+          error={!!touched.email && !!errors.email}
+          errorText={errors.email ?? ""}
+          handleChange={handleChange("email")}
+          handleBlur={handleBlur("email")}
+          type="email"
+          autoCapitalize="none"
+        />
+
+        <Stack
+          sx={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: 5,
+          }}
+        >
+          <SelectCountryCodes
+            label={"Cód."}
+            name={"countryCode"}
+            value={values.countryCode}
+            error={!!touched.countryCode && !!errors.countryCode}
+            errorText={errors.countryCode ?? ""}
+            setFieldValue={setFieldValue}
+            handleBlur={handleBlur("countryCode")}
+          />
+
+          <InputFormik
+            label="Teléfono"
+            name="phone"
+            value={values.phone}
+            error={!!touched.phone && !!errors.phone}
+            errorText={errors.phone ?? ""}
+            handleChange={handleChange("phone")}
+            handleBlur={handleBlur("phone")}
+            style={{ width: "70%" }}
+          />
+        </Stack>
+
+        <InputFormik
+          label="Contraseña"
+          name="password"
+          value={values.password}
+          error={!!touched.password && !!errors.password}
+          errorText={errors.password ?? ""}
+          handleChange={handleChange("password")}
+          handleBlur={handleBlur("password")}
+          type="password"
+        />
+
+        <Button
+          variant="contained"
+          onClick={(e: any) => handleSubmit(e)}
+          loading={loading}
+          disabled={loading}
+          sx={{
+            fontWeight: 900,
+            borderRadius: 10,
+            backgroundColor: "#0f0f0f",
+            color: "white",
+          }}
+        >
+          Registrarse
+        </Button>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 0.5,
+            justifyContent: "center",
+          }}
+        >
+          <Typography>Si ya tienes cuenta, ingresa </Typography>
+          <Typography
+            onClick={handleLogin}
+            style={{
+              padding: 0,
+              margin: 0,
+              color: "0f0f0f",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            aquí
+          </Typography>
+        </Box>
+      </FormControl>
+    </Container>
+  );
+}
