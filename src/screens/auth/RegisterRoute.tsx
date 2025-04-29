@@ -96,7 +96,7 @@ export default function RegisterScreen() {
           sx={{
             flexDirection: "row",
             justifyContent: "space-between",
-            gap: 5,
+            gap: 2,
           }}
         >
           <SelectCountryCodes
