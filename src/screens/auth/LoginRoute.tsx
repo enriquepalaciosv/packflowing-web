@@ -18,6 +18,7 @@ export default function LoginRoute() {
   } = useLoginFormik();
 
   const handleRegister = () => navigate("/register");
+  const handleResetPassword = () => navigate("/reset-password");
 
   return (
     <Container
@@ -60,16 +61,31 @@ export default function LoginRoute() {
           autoCapitalize="none"
         />
 
-        <InputFormik
-          label="Contraseña"
-          name="password"
-          value={values.password}
-          error={!!touched.password && !!errors.password}
-          errorText={errors.password ?? ""}
-          handleChange={handleChange("password")}
-          handleBlur={handleBlur("password")}
-          type="password"
-        />
+        <Box>
+          <InputFormik
+            label="Contraseña"
+            name="password"
+            value={values.password}
+            error={!!touched.password && !!errors.password}
+            errorText={errors.password ?? ""}
+            handleChange={handleChange("password")}
+            handleBlur={handleBlur("password")}
+            type="password"
+          />
+
+          <Button
+            variant="text"
+            sx={{
+              fontSize: "small",
+              marginTop: 1,
+              textTransform: "none",
+              padding: 0,
+            }}
+            onClick={handleResetPassword}
+          >
+            ¿Has olvidado tu contraseña?
+          </Button>
+        </Box>
 
         <Button
           variant="contained"
