@@ -1,8 +1,7 @@
 import { Box, Button, Container, FormControl, Typography } from "@mui/material";
-import { StyleSheet } from "react-native";
-import useResetPasswordFormik from "../../hooks/useResetPasswordHook";
-import InputFormik from "../../components/InputFormik";
 import { useNavigate } from "react-router-dom";
+import InputFormik from "../../components/InputFormik";
+import useResetPasswordFormik from "../../hooks/useResetPasswordHook";
 
 const ResetPasswordScreen = () => {
   const navigate = useNavigate();
