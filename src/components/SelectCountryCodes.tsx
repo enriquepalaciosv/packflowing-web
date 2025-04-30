@@ -23,7 +23,7 @@ export default function SelectCountryCodes({
   handleBlur,
 }: SelectCountryCodesProps) {
   return (
-    <Box sx={{ width: "30%" }}>
+    <Box sx={{ width: { xs: "40%", md: "30%" } }}>
       <PhoneInput
         value={value}
         onChange={(phone) => setFieldValue(name, `+${phone}`)}

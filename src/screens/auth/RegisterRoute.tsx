@@ -10,8 +10,10 @@ import useRegisterFormik from "../../hooks/useRegisterHook";
 import { useNavigate } from "react-router-dom";
 import InputFormik from "../../components/InputFormik";
 import SelectCountryCodes from "../../components/SelectCountryCodes";
+import useBreakpoint from "../../utils/useBreakpoint";
 
 export default function RegisterScreen() {
+  const bp = useBreakpoint();
   const navigate = useNavigate();
   const {
     values,
@@ -59,7 +61,18 @@ export default function RegisterScreen() {
         Registrar usuarios
       </Typography>
 
-      <FormControl sx={{ width: "40%", margin: "0 auto", gap: 2 }}>
+      <FormControl
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "40%",
+          },
+          mx: "auto",
+          gap: 2,
+        }}
+      >
         <InputFormik
           label="Nombre"
           name="name"
@@ -117,7 +130,7 @@ export default function RegisterScreen() {
             errorText={errors.phone ?? ""}
             handleChange={handleChange("phone")}
             handleBlur={handleBlur("phone")}
-            style={{ width: "70%" }}
+            style={{ width: bp === "xs" || bp === "sm" ? "60%" : "70%" }}
           />
         </Stack>
 
