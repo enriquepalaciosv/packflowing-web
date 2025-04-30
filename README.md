@@ -92,3 +92,23 @@ Tarifa {
 
 Si **agencia.activo = false** la navegación estará deshabilitada y se mostrará en pantalla un mensaje **"Servicio no disponible por el momento."**
 
+## Autenticación 
+
+### Registro de usuarios 
+
+Esta funcionalidad sólo estará disponible si **agencia.registrarUsuarios = true**
+
+Se accede desde la página principal, en este caso **Login**, aparece el bóton que redirige a **/register** sólo si la condición anterior se cumple
+
+El modelo en la base de datos para usuarios del tipo administradores es el siguiente
+
+```
+Admin {
+  countryCode: string
+  email: string
+  lastName: string
+  name: string
+  phone: number
+  role: "Admin" // valor predeterminado 
+}
+```
