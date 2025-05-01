@@ -22,7 +22,12 @@ const ResetPasswordScreen = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "75%",
+        width: {
+          xs: "100%",
+          sm: "100%",
+          md: "75%",
+          lg: "75%",
+        },
         padding: 4,
         justifyContent: "center",
         gap: 1,
@@ -37,7 +42,12 @@ const ResetPasswordScreen = () => {
         sx={{
           color: "#0f0f0f",
           fontWeight: 900,
-          fontSize: 25,
+          fontSize: {
+            xs: 20,
+            sm: 20,
+            md: 25,
+            lg: 25,
+          },
           textAlign: "center",
           marginBottom: 2,
         }}
@@ -45,7 +55,18 @@ const ResetPasswordScreen = () => {
         Recuperar contraseña
       </Typography>
 
-      <FormControl sx={{ width: "40%", margin: "0 auto", gap: 3 }}>
+      <FormControl
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "40%",
+          },
+          mx: "auto",
+          gap: 2,
+        }}
+      >
         <InputFormik
           label="Correo"
           name="email"
@@ -68,33 +89,37 @@ const ResetPasswordScreen = () => {
             borderRadius: 10,
             backgroundColor: "#0f0f0f",
             color: "white",
+            fontSize: {
+              xs: 12,
+              sm: 12,
+              md: 16,
+              lg: 16,
+            },
           }}
         >
           Enviar instrucciones
         </Button>
 
-        <Box
+        <Typography
           sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 0.5,
-            justifyContent: "center",
+            textAlign: "center",
           }}
         >
-          <Typography>Volver a </Typography>
+          Volver a
           <Typography
+            component="span"
             onClick={handleLogin}
             style={{
               padding: 0,
-              margin: 0,
               color: "0f0f0f",
               fontWeight: 700,
+              marginLeft: 4,
               cursor: "pointer",
             }}
           >
             Iniciar sesión
           </Typography>
-        </Box>
+        </Typography>
         {/* 
 
         <View style={styles.footer}>

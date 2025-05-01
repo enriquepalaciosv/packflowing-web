@@ -26,7 +26,12 @@ export default function LoginRoute() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "75%",
+        width: {
+          xs: "100%",
+          sm: "100%",
+          md: "75%",
+          lg: "75%",
+        },
         padding: 4,
         justifyContent: "center",
         gap: 1,
@@ -41,14 +46,30 @@ export default function LoginRoute() {
         sx={{
           color: "#0f0f0f",
           fontWeight: 900,
-          fontSize: 25,
+          fontSize: {
+            xs: 20,
+            sm: 20,
+            md: 25,
+            lg: 25,
+          },
           textAlign: "center",
           marginBottom: 2,
         }}
       >
         Iniciar sesión
       </Typography>
-      <FormControl sx={{ width: "40%", margin: "0 auto", gap: 3 }}>
+      <FormControl
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "40%",
+          },
+          mx: "auto",
+          gap: 2,
+        }}
+      >
         <InputFormik
           label="Correo"
           name="email"
@@ -103,28 +124,22 @@ export default function LoginRoute() {
         </Button>
 
         {agencia?.registrarUsuarios && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 0.5,
-              justifyContent: "center",
-            }}
-          >
-            <Typography>Si desea registrar nuevos usuarios, ingresa</Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            Si desea registrar nuevos usuarios, ingresa
             <Typography
+              component="span"
               onClick={handleRegister}
               style={{
                 padding: 0,
-                margin: 0,
                 color: "0f0f0f",
                 fontWeight: 700,
                 cursor: "pointer",
+                marginLeft: 4,
               }}
             >
               aquí
             </Typography>
-          </Box>
+          </Typography>
         )}
       </FormControl>
     </Container>
