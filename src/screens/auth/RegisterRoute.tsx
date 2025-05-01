@@ -45,7 +45,7 @@ export default function RegisterScreen() {
           md: "75%",
           lg: "75%",
         },
-        padding: 2,
+        padding: 4,
         gap: 1,
       }}
     >
