@@ -39,7 +39,12 @@ export default function RegisterScreen() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "95vh",
-        width: "75%",
+        width: {
+          xs: "100%",
+          sm: "100%",
+          md: "75%",
+          lg: "75%",
+        },
         padding: 2,
         gap: 1,
       }}
@@ -54,7 +59,12 @@ export default function RegisterScreen() {
         sx={{
           color: "#0f0f0f",
           fontWeight: 900,
-          fontSize: 25,
+          fontSize: {
+            xs: 20,
+            sm: 20,
+            md: 25,
+            lg: 25,
+          },
           textAlign: "center",
         }}
       >
@@ -160,28 +170,22 @@ export default function RegisterScreen() {
           Registrarse
         </Button>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 0.5,
-            justifyContent: "center",
-          }}
-        >
-          <Typography>Si ya tienes cuenta, ingresa </Typography>
+        <Typography sx={{ textAlign: "center" }}>
+          Si ya tienes cuenta, ingresa
           <Typography
+            component="span"
             onClick={handleLogin}
             style={{
               padding: 0,
-              margin: 0,
               color: "0f0f0f",
               fontWeight: 700,
               cursor: "pointer",
+              marginLeft: 4,
             }}
           >
             aquí
           </Typography>
-        </Box>
+        </Typography>
       </FormControl>
     </Container>
   );
