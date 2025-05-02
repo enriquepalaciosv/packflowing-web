@@ -24,7 +24,7 @@ export default function NavBar() {
   const settings = [
     {
       title: "Perfil",
-      onClick: () => null,
+      onClick: () => navigate("/profile"),
     },
     {
       title: "Cerrar sesión",
