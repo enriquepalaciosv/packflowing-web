@@ -1,5 +1,12 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Grid, IconButton, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import Fee from "../interfaces/Fee";
 import InputFormik from "./InputFormik";
 
@@ -26,7 +33,7 @@ export default function FeeItem({
 }: FeeItemProps) {
   return (
     <Grid container spacing={2} alignItems="center">
-      <Grid size={{ xs: 5 }}>
+      <Grid size={{ xs: 4, md: 5 }}>
         <InputFormik
           label="Nombre"
           name={`tarifas[${index}].nombre`}
@@ -37,7 +44,7 @@ export default function FeeItem({
           handleBlur={handleBlur}
         />
       </Grid>
-      <Grid size={{ xs: 3 }}>
+      <Grid size={{ xs: 3, md: 3 }}>
         <InputFormik
           label="Monto"
           type={"number"}
@@ -49,21 +56,23 @@ export default function FeeItem({
           handleBlur={handleBlur}
         />
       </Grid>
-      <Grid size={{ xs: 3 }}>
-        <Select
-          value={tarifa.moneda}
-          onChange={(e) =>
-            setFieldValue(`tarifas[${index}].moneda`, e.target.value)
-          }
-          onBlur={handleBlur}
-          name={`tarifas[${index}].moneda`}
-          fullWidth
-          size="small"
-          error={touched?.moneda && !!error?.moneda}
-        >
-          <MenuItem value="USD">USD</MenuItem>
-          <MenuItem value="C$">C$</MenuItem>
-        </Select>
+      <Grid size={{ xs: 3, md: 3 }}>
+        <FormControl fullWidth>
+          <InputLabel id="select-currency">Moneda</InputLabel>
+          <Select
+            labelId="select-currency"
+            id="demo-simple-select"
+            value={tarifa.moneda}
+            label="Moneda"
+            onChange={(e) =>
+              setFieldValue(`tarifas[${index}].moneda`, e.target.value)
+            }
+            size="small"
+          >
+            <MenuItem value="USD">USD</MenuItem>
+            <MenuItem value="C$">C$</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
       <Grid size={{ xs: 1 }} display="flex" justifyContent="center">
         <IconButton onClick={() => onRemove(index)}>

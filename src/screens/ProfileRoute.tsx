@@ -37,7 +37,10 @@ export default function ProfileRoute() {
   return (
     <>
       <AppBar />
-      <Container maxWidth={false} sx={{ mt: 1, p: 0, ml: "17%", width: "83%" }}>
+      <Container
+        maxWidth={false}
+        sx={{ mt: 1, p: { xs: "0 8px", md: 0 }, ml: "17%", width: "83%" }}
+      >
         <NavBar />
         <FormGroup
           sx={{
