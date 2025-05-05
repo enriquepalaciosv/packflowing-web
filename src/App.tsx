@@ -11,6 +11,7 @@ import { Agencia, useAgenciaStore } from "./zustand/useAgenciaStore";
 import RegisterRoute from "./screens/auth/RegisterRoute";
 import { Typography } from "@mui/material";
 import { ToastContainer } from "react-toastify";
+import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
@@ -48,6 +49,7 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<LoginRoute />} />
+        <Route path="/reset-password" element={<ResetPasswordScreen />} />
         {agencia.registrarUsuarios && (
           <Route path="/register" element={<RegisterRoute />} />
         )}
