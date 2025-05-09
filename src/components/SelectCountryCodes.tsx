@@ -23,28 +23,40 @@ export default function SelectCountryCodes({
   handleBlur,
 }: SelectCountryCodesProps) {
   return (
-    <Box sx={{ width: "100%", maxWidth: 200 }}>
+    <Box sx={{ width: { xs: "40%", md: "30%" } }}>
       <PhoneInput
-        country={"us"}
         value={value}
         onChange={(phone) => setFieldValue(name, `+${phone}`)}
         onBlur={handleBlur}
         preferredCountries={["us", "ni"]}
         inputStyle={{
           width: "100%",
-          borderColor: error ? "#f44336" : "#ccc",
-          height: "100%",
+          borderColor: error ? "#f44336" : "#CCCCCC",
+          height: "40px",
+          paddingLeft: "50%",
         }}
+        placeholder={label}
         specialLabel={label}
-        buttonStyle={{ height: "100%" }}
-        containerStyle={{ height: "100%" }}
-        searchStyle={{ height: "100%" }}
+        buttonStyle={{
+          width: "40%",
+          height: "40px",
+          borderColor: error ? "#f44336" : "#CCCCCC",
+          borderRightColor: "#CCCCCC",
+          paddingRight: "5px",
+        }}
+        containerStyle={{ height: "40px" }}
+        searchStyle={{ height: "40px" }}
         inputProps={{
           name,
         }}
       />
       {error && (
-        <Typography variant="caption" color="error">
+        <Typography
+          fontSize={12}
+          marginTop={0.5}
+          color="error"
+          sx={{ width: "max-content" }}
+        >
           {errorText}
         </Typography>
       )}

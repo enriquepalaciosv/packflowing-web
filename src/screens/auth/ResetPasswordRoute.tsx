@@ -1,25 +1,21 @@
 import { Box, Button, Container, FormControl, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import InputFormik from "../../components/InputFormik";
-import useLoginFormik from "../../hooks/useLoginHook";
-import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import useResetPasswordFormik from "../../hooks/useResetPasswordHook";
 
-export default function LoginRoute() {
+const ResetPasswordScreen = () => {
   const navigate = useNavigate();
-  const { agencia } = useAgenciaStore();
   const {
     values,
-    loading,
     errors,
     touched,
+    loading,
     handleChange,
     handleBlur,
     handleSubmit,
-  } = useLoginFormik();
+  } = useResetPasswordFormik();
 
-  const handleRegister = () => navigate("/register");
-  const handleResetPassword = () => navigate("/reset-password");
-
+  const handleLogin = () => navigate("/login");
   return (
     <Container
       maxWidth={false}
@@ -56,8 +52,9 @@ export default function LoginRoute() {
           marginBottom: 2,
         }}
       >
-        Iniciar sesión
+        Recuperar contraseña
       </Typography>
+
       <FormControl
         sx={{
           width: {
@@ -82,32 +79,6 @@ export default function LoginRoute() {
           autoCapitalize="none"
         />
 
-        <Box>
-          <InputFormik
-            label="Contraseña"
-            name="password"
-            value={values.password}
-            error={!!touched.password && !!errors.password}
-            errorText={errors.password ?? ""}
-            handleChange={handleChange("password")}
-            handleBlur={handleBlur("password")}
-            type="password"
-          />
-
-          <Button
-            variant="text"
-            sx={{
-              fontSize: "small",
-              marginTop: 1,
-              textTransform: "none",
-              padding: 0,
-            }}
-            onClick={handleResetPassword}
-          >
-            ¿Has olvidado tu contraseña?
-          </Button>
-        </Box>
-
         <Button
           variant="contained"
           onClick={(e: any) => handleSubmit(e)}
@@ -118,30 +89,51 @@ export default function LoginRoute() {
             borderRadius: 10,
             backgroundColor: "#0f0f0f",
             color: "white",
+            fontSize: {
+              xs: 12,
+              sm: 12,
+              md: 16,
+              lg: 16,
+            },
           }}
         >
-          Iniciar sesión
+          Enviar instrucciones
         </Button>
 
-        {agencia?.registrarUsuarios && (
-          <Typography sx={{ textAlign: "center" }}>
-            Si desea registrar nuevos usuarios, ingresa
-            <Typography
-              component="span"
-              onClick={handleRegister}
-              style={{
-                padding: 0,
-                color: "0f0f0f",
-                fontWeight: 700,
-                cursor: "pointer",
-                marginLeft: 4,
-              }}
-            >
-              aquí
-            </Typography>
+        <Typography
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          Volver a
+          <Typography
+            component="span"
+            onClick={handleLogin}
+            style={{
+              padding: 0,
+              color: "0f0f0f",
+              fontWeight: 700,
+              marginLeft: 4,
+              cursor: "pointer",
+            }}
+          >
+            Iniciar sesión
           </Typography>
-        )}
+        </Typography>
+        {/* 
+
+        <View style={styles.footer}>
+          <Text>Volver a </Text>
+          <Text
+            onPress={() => router.push("/sign-in")}
+            style={styles.footerLink}
+          >
+            iniciar sesión
+          </Text>
+        </View> */}
       </FormControl>
     </Container>
   );
-}
+};
+
+export default ResetPasswordScreen;

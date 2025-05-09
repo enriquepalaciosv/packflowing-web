@@ -10,8 +10,10 @@ import useRegisterFormik from "../../hooks/useRegisterHook";
 import { useNavigate } from "react-router-dom";
 import InputFormik from "../../components/InputFormik";
 import SelectCountryCodes from "../../components/SelectCountryCodes";
+import useBreakpoint from "../../utils/useBreakpoint";
 
 export default function RegisterScreen() {
+  const bp = useBreakpoint();
   const navigate = useNavigate();
   const {
     values,
@@ -37,8 +39,13 @@ export default function RegisterScreen() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "95vh",
-        width: "75%",
-        padding: 2,
+        width: {
+          xs: "100%",
+          sm: "100%",
+          md: "75%",
+          lg: "75%",
+        },
+        padding: 4,
         gap: 1,
       }}
     >
@@ -52,14 +59,30 @@ export default function RegisterScreen() {
         sx={{
           color: "#0f0f0f",
           fontWeight: 900,
-          fontSize: 25,
+          fontSize: {
+            xs: 20,
+            sm: 20,
+            md: 25,
+            lg: 25,
+          },
           textAlign: "center",
         }}
       >
         Registrar usuarios
       </Typography>
 
-      <FormControl sx={{ width: "40%", margin: "0 auto", gap: 2 }}>
+      <FormControl
+        sx={{
+          width: {
+            xs: "100%",
+            sm: "80%",
+            md: "60%",
+            lg: "40%",
+          },
+          mx: "auto",
+          gap: 2,
+        }}
+      >
         <InputFormik
           label="Nombre"
           name="name"
@@ -96,7 +119,7 @@ export default function RegisterScreen() {
           sx={{
             flexDirection: "row",
             justifyContent: "space-between",
-            gap: 5,
+            gap: 2,
           }}
         >
           <SelectCountryCodes
@@ -117,7 +140,7 @@ export default function RegisterScreen() {
             errorText={errors.phone ?? ""}
             handleChange={handleChange("phone")}
             handleBlur={handleBlur("phone")}
-            style={{ width: "70%" }}
+            style={{ width: bp === "xs" || bp === "sm" ? "60%" : "70%" }}
           />
         </Stack>
 
@@ -147,28 +170,22 @@ export default function RegisterScreen() {
           Registrarse
         </Button>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 0.5,
-            justifyContent: "center",
-          }}
-        >
-          <Typography>Si ya tienes cuenta, ingresa </Typography>
+        <Typography sx={{ textAlign: "center" }}>
+          Si ya tienes cuenta, ingresa
           <Typography
+            component="span"
             onClick={handleLogin}
             style={{
               padding: 0,
-              margin: 0,
               color: "0f0f0f",
               fontWeight: 700,
               cursor: "pointer",
+              marginLeft: 4,
             }}
           >
             aquí
           </Typography>
-        </Box>
+        </Typography>
       </FormControl>
     </Container>
   );

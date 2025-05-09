@@ -5,7 +5,7 @@ interface InputFormikProps {
   name: string;
   label: string;
   defaultValue?: string;
-  value: string;
+  value?: string;
   error: boolean;
   errorText: string;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
