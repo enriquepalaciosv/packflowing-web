@@ -14,8 +14,9 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { database } from "../..";
+import { database, functions } from "../..";
 import { Usuario } from "../usuarios";
+import { httpsCallable } from "firebase/functions";
 
 const ESTADOS = [
   "entregado",
@@ -45,6 +46,8 @@ export interface Paquete {
 export interface PaqueteDto extends Paquete {
   usuario: Usuario;
 }
+
+const guardarPaquete = httpsCallable(functions, "guardarPaquete");
 
 // Contar paquetes por estado
 export async function countPackagesByEstado() {
@@ -117,9 +120,13 @@ export async function fetchPaquetesLoteado(
 }
 
 export async function updatePaquete(id: string, data: Partial<Paquete>) {
-  const db = getFirestore();
-  const paqueteRef = doc(db, "paquetes", id);
-  await updateDoc(paqueteRef, data);
+  try {
+    const result = await guardarPaquete({ paquete: data, edit: true });
+    console.log({ result });
+    return result;
+  } catch (error) {
+    console.log({ error });
+  }
 }
 
 export const savePaquete = async (data: Paquete) => {

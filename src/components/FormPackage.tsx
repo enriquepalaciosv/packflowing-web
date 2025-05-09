@@ -37,6 +37,7 @@ export default function FormPackage({
     usuario: entity?.usuario ?? undefined,
     paquetes: [
       {
+        id: entity?.id ?? "",
         idRastreo: entity?.idRastreo ?? "",
         via: entity?.via ?? "aereo",
         contenido: entity?.contenido ?? undefined,
