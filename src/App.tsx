@@ -3,6 +3,8 @@ import LoginRoute from "./screens/auth/LoginRoute";
 import HomeRoute from "./screens/HomeRoute";
 import ProtectedRoute from "./screens/ProtectedRoute";
 import { useEffect } from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   // guardarAgenciaDefault,
   obtenerAgencia,
@@ -14,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import ProfileRoute from "./screens/ProfileRoute";
 import { Agency } from "./interfaces/Agency";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
+import { seedRandomPackages } from "./hardcode";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
@@ -46,23 +49,25 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <ToastContainer />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <BrowserRouter>
+        <ToastContainer />
 
-      <Routes>
-        <Route path="/login" element={<LoginRoute />} />
-        <Route path="/reset-password" element={<ResetPasswordScreen />} />
-        {agencia.registrarUsuarios && (
-          <Route path="/register" element={<RegisterRoute />} />
-        )}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<HomeRoute />} />
-          <Route path="/profile" element={<ProfileRoute />} />
-        </Route>
+        <Routes>
+          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/reset-password" element={<ResetPasswordScreen />} />
+          {agencia.registrarUsuarios && (
+            <Route path="/register" element={<RegisterRoute />} />
+          )}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<HomeRoute />} />
+            <Route path="/profile" element={<ProfileRoute />} />
+          </Route>
 
-        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+        </Routes>
+      </BrowserRouter>
+    </LocalizationProvider>
   );
 }
 

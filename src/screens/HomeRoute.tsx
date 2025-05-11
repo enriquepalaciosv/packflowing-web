@@ -6,6 +6,7 @@ import NavBar from "../components/NavBar";
 import TablePackages from "../components/TablePackages";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { usePaqueteStore } from "../zustand/usePaquetesStore";
+import DateRangePickerComponent from "../components/DateRangePicker";
 
 export default function HomeRoute() {
   const { agencia } = useAgenciaStore();
@@ -45,6 +46,14 @@ export default function HomeRoute() {
             marginTop: 2,
           }}
         >
+          <DateRangePickerComponent
+          // startText="Desde"
+          // endText="Hasta"
+          // value={[from, to]}
+          // onChange={([start, end]) => {
+          //   if (start && end) setRange(start, end);
+          // }}
+          />
           <Grid container spacing={2}>
             <CardStatistic
               title="Paquetes en tránsito"
