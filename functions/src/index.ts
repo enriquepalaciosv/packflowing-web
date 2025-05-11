@@ -86,6 +86,7 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
     await paqueteRef.update({
       ...paquete,
       rastreo: nuevoRastreo,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     await enviarNotificacion(paquete);
@@ -107,6 +108,7 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
       ...paquete,
       rastreo: [rastreoInicial],
       estado: "recibido",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     if (plan === "Básico") {
