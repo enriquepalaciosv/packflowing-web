@@ -135,3 +135,45 @@ Admin {
   role: "Admin" // valor predeterminado 
 }
 ```
+
+## Login
+
+Para el login, se pide email y contraseña
+
+Este servicio, realiza el login, en el caso de que inicie sesión con éxito, guarda la información en localStorage y la sesión persiste si el administrador refresca la página
+
+Si el email es incorrecto, o no existe o si la contraseña es incorrecta, arroja un error generico 
+
+```
+Email o contraseña incorrecta
+```
+
+También arroja error si el usuario que intenta loguearse **no** es del tipo **Admin**
+
+```
+No tienes permisos para acceder.
+```
+
+## Recuperar contraseña
+
+Se utiliza el servicio de reestablecimiento que ofrece Firebase Auth por defecto
+
+El formulario de la app, pide el correo con el cual el usuario se registro, y se recibe las instrucciones por correo
+
+El template del email se puede modificar facilmente desde la pantalla principal de Firebase Auth. Se debe ingresar a 
+
+```
+Autenticación > Plantillas > Reestablecer Contraseña
+```
+
+En esta pantalla aparece los datos del email, como "remitente", "de", "asunto", el cuerpo del email y "responder a" que por defecto no admite respuestas
+
+En la parte inferior izquierda aparece un desplegable de idioma, el cual permite modificar el idioma del email y la pantalla de reestablecimiento 
+
+```
+Idioma de la plantilla
+```
+
+En el email se puede observar un link, este link redirige a una pantalla por defecto que brinda Firebase Auth, es un simple formulario donde se ingresa la nueva contraseña, y se envía. La página debería mostrar un mensaje de confirmación "Ahora puedes acceder con tu contraseña nueva"
+
+Este link se puede cambiar por una URL de acción personalizada, por ejemplo alguna URL con un formulario ó otra opción es personalizar el servicio **sendPasswordResetEmail** para que el link abra la app 
