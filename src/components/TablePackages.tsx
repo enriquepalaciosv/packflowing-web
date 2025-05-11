@@ -1,21 +1,30 @@
 import { Box, Button, Chip, MenuItem, Select, TextField } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { GridColDef, GridRenderEditCellParams } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  GridRenderEditCellParams,
+  GridRowSelectionModel,
+} from "@mui/x-data-grid";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { PaqueteDto, updatePaquete } from "../firebase/firestore/paquetes";
 import { COLORS_BY_STATUS } from "../utils/colorsStatus";
 import STATUS_PACKAGES from "../utils/statusPackages";
 import { usePaqueteStore } from "../zustand/usePaquetesStore";
 import DataTable from "./DataTable";
+import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
+import ModalPackagesInBatch from "./ModalPackagesInBatch";
 
 const paginationModel = { page: 0, pageSize: 20 };
 
 export default function TablePackages() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModalInBatch, setIsOpenModalInBatch] = useState(false);
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
-  const { allPaquetes } = usePaqueteStore();
+  const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
+  const { allPaquetes, fetchAllPaquetes, fetchCounts } = usePaqueteStore();
 
   const handleIsOpenModal = (b?: boolean) => setIsOpen(b ?? !isOpen);
 
@@ -127,6 +136,11 @@ export default function TablePackages() {
         onClose={handleCloseModal}
         entity={entity}
       />
+      <ModalPackagesInBatch
+        isOpen={isOpenModalInBatch}
+        onClose={() => setIsOpenModalInBatch(false)}
+        ids={selectionModel?.ids}
+      />
       <Paper sx={{ padding: 2, width: "auto", marginTop: 2 }}>
         <Box
           sx={{
@@ -151,21 +165,41 @@ export default function TablePackages() {
             Crear
           </Button>
         </Box>
+
         <DataTable
           rows={filteredRows}
           columns={columns}
           paginationModel={paginationModel}
+          onSelectionModelChange={setSelectionModel}
           processRowUpdate={async (newRow, oldRow) => {
             try {
-              await updatePaquete(newRow.id, { estado: newRow.estado });
+              await updatePaquete({ ...newRow, estado: newRow.estado });
+              toast.success("Estado del paquete actualizado con éxito");
               return newRow;
             } catch (error) {
               console.error("Error al actualizar:", error);
+              toast.error(`Error al actualizar estado del paquete`);
               return oldRow;
+            } finally {
+              await Promise.all([fetchAllPaquetes(), fetchCounts()]);
             }
           }}
           onProcessRowUpdateError={(error) => {
             console.error("Error al procesar actualización:", error);
+          }}
+          slots={{
+            footer: () => (
+              <FooterTable
+                selectedCount={selectionModel?.ids.size || 0}
+                onBatchEdit={() => setIsOpenModalInBatch(true)}
+                //   {
+                //   const selectedPaquetes = allPaquetes.filter((p) =>
+                //     selectionModel?.ids.has(p.id)
+                //   );
+                //   console.log("Editar en lote:", selectedPaquetes);
+                // }}
+              />
+            ),
           }}
         />
       </Paper>
