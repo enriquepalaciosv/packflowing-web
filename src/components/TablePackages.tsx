@@ -38,6 +38,7 @@ export default function TablePackages() {
   useEffect(() => {
     resetPackages();
     fetchNextPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleIsOpenModal = (b?: boolean) => setIsOpen(b ?? !isOpen);

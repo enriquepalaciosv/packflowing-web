@@ -1,22 +1,18 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginRoute from "./screens/auth/LoginRoute";
-import HomeRoute from "./screens/HomeRoute";
-import ProtectedRoute from "./screens/ProtectedRoute";
-import { useEffect } from "react";
+import { Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  // guardarAgenciaDefault,
-  obtenerAgencia,
-} from "./firebase/firestore/agencia";
-import { useAgenciaStore } from "./zustand/useAgenciaStore";
-import RegisterRoute from "./screens/auth/RegisterRoute";
-import { Typography } from "@mui/material";
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import ProfileRoute from "./screens/ProfileRoute";
+import { obtenerAgencia } from "./firebase/firestore/agencia";
 import { Agency } from "./interfaces/Agency";
+import HomeRoute from "./screens/HomeRoute";
+import ProfileRoute from "./screens/ProfileRoute";
+import ProtectedRoute from "./screens/ProtectedRoute";
+import LoginRoute from "./screens/auth/LoginRoute";
+import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
-import { seedRandomPackages } from "./hardcode";
+import { useAgenciaStore } from "./zustand/useAgenciaStore";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
