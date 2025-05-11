@@ -94,10 +94,6 @@ Si **agencia.activo = false** la navegación estará deshabilitada y se mostrar�
 
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 ## Perfil 
 
 En esta pantalla, los administradores van a poder actualizar información de contacto de la agencia como; número de contacto y el listado de tarifas
