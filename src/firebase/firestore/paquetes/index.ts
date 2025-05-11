@@ -1,5 +1,6 @@
 import {
   QueryDocumentSnapshot,
+  QueryFieldFilterConstraint,
   collection,
   doc,
   getCountFromServer,
@@ -46,27 +47,47 @@ export interface PaqueteDto extends Paquete {
 
 const guardarPaquete = httpsCallable(functions, "guardarPaquete");
 
-// Contar paquetes por estado
-export async function countPackagesByEstado() {
+export async function countPackagesByEstado(fromDate?: Date, toDate?: Date) {
   const db = getFirestore();
   const paquetesRef = collection(db, "paquetes");
 
+  const fechaFilters: QueryFieldFilterConstraint[] = [];
+
+  if (fromDate) fechaFilters.push(where("createdAt", ">=", fromDate));
+
+  if (toDate) fechaFilters.push(where("createdAt", "<=", toDate));
+
   const counts = await Promise.all(
     ESTADOS.map(async (estado) => {
-      const queryRef = query(paquetesRef, where("estado", "==", estado));
+      const queryRef = query(
+        paquetesRef,
+        where("estado", "==", estado),
+        ...fechaFilters
+      );
       const snapshot = await getCountFromServer(queryRef);
       return { estado, count: snapshot.data().count };
     })
   );
 
-  return counts.reduce(
+  const totalQuery = query(paquetesRef, ...fechaFilters);
+  const totalSnapshot = await getCountFromServer(totalQuery);
+  const total = totalSnapshot.data().count;
+
+  const countsByEstado = counts.reduce(
     (acc, curr) => ({ ...acc, [curr.estado]: curr.count }),
     {} as Record<(typeof ESTADOS)[number], number>
   );
+
+  return {
+    ...countsByEstado,
+    total,
+  };
 }
 
 export async function fetchPaquetesLoteado(
-  lastDoc?: QueryDocumentSnapshot
+  lastDoc?: QueryDocumentSnapshot,
+  fromDate?: Date,
+  toDate?: Date
 ): Promise<{
   paquetes: (Paquete & { usuario?: any })[]; // ← Incluye objeto usuario
   lastDoc?: QueryDocumentSnapshot;
@@ -76,6 +97,8 @@ export async function fetchPaquetesLoteado(
 
   const paquetesQuery = query(
     paquetesRef,
+    where("createdAt", ">=", fromDate),
+    where("createdAt", "<=", toDate),
     orderBy("idRastreo", "desc"),
     ...(lastDoc ? [startAfter(lastDoc)] : []),
     limit(100)

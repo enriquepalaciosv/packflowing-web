@@ -5,7 +5,7 @@ import {
   GridRenderEditCellParams,
   GridRowSelectionModel,
 } from "@mui/x-data-grid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PaqueteDto, updatePaquete } from "../firebase/firestore/paquetes";
 import { COLORS_BY_STATUS } from "../utils/colorsStatus";
@@ -16,15 +16,29 @@ import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
 import ModalPackagesInBatch from "./ModalPackagesInBatch";
 
-const paginationModel = { page: 0, pageSize: 20 };
-
 export default function TablePackages() {
   const [isOpen, setIsOpen] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 20,
+  });
   const [isOpenModalInBatch, setIsOpenModalInBatch] = useState(false);
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const { allPaquetes, fetchAllPaquetes, fetchCounts } = usePaqueteStore();
+  const {
+    countTotal,
+    allPaquetes,
+    resetPackages,
+    fetchNextPage,
+    fetchAllPaquetes,
+    fetchCounts,
+  } = usePaqueteStore();
+
+  useEffect(() => {
+    resetPackages();
+    fetchNextPage();
+  }, []);
 
   const handleIsOpenModal = (b?: boolean) => setIsOpen(b ?? !isOpen);
 
@@ -167,7 +181,10 @@ export default function TablePackages() {
         </Box>
 
         <DataTable
-          rows={filteredRows}
+          rows={filteredRows.slice(
+            paginationModel.page * paginationModel.pageSize,
+            (paginationModel.page + 1) * paginationModel.pageSize
+          )}
           columns={columns}
           paginationModel={paginationModel}
           onSelectionModelChange={setSelectionModel}
@@ -201,6 +218,20 @@ export default function TablePackages() {
               />
             ),
           }}
+          onPaginationModelChange={async (newModel: {
+            page: number;
+            pageSize: number;
+          }) => {
+            setPaginationModel(newModel);
+
+            const totalLoaded = allPaquetes.length;
+            const totalNeeded = (newModel.page + 1) * newModel.pageSize;
+
+            if (totalNeeded > totalLoaded) {
+              await fetchNextPage();
+            }
+          }}
+          rowCount={search ? filteredRows.length : countTotal}
         />
       </Paper>
     </>

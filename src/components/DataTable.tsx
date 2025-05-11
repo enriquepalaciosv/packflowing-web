@@ -21,16 +21,20 @@ interface DataTableProps {
   onProcessRowUpdateError?: (error: unknown) => void;
   onSelectionModelChange: any;
   slots: Partial<GridSlotsComponent>;
+  onPaginationModelChange: any;
+  rowCount: number;
 }
 
 export default function DataTable({
   rows,
+  rowCount,
   columns,
   paginationModel,
   processRowUpdate,
   onProcessRowUpdateError,
   onSelectionModelChange,
   slots,
+  onPaginationModelChange,
 }: DataTableProps) {
   return (
     <DataGrid
@@ -43,8 +47,11 @@ export default function DataTable({
       processRowUpdate={processRowUpdate}
       onProcessRowUpdateError={onProcessRowUpdateError}
       onRowSelectionModelChange={onSelectionModelChange}
+      onPaginationModelChange={onPaginationModelChange}
       slots={slots}
       hideFooterSelectedRowCount
+      paginationMode="server"
+      rowCount={rowCount}
     />
   );
 }
