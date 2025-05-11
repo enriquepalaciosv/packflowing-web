@@ -199,4 +199,15 @@ export const updatePackagesInBatch = async ({
   }
 
   await batch.commit();
+
+  const enviarNotificaciones = httpsCallable(
+    functions,
+    "enviarNotificacionesEnBatch"
+  );
+
+  try {
+    await enviarNotificaciones({ paqueteIds: ids });
+  } catch (error) {
+    console.error("Error enviando notificaciones:", error);
+  }
 };
