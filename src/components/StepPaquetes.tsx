@@ -31,7 +31,7 @@ export default function StepPaquetes({
       {
         idRastreo: "",
         via: "aereo",
-        contenido: undefined,
+        contenido: "",
         tarifa: agencia?.tarifas[0],
         peso: {
           monto: 0,

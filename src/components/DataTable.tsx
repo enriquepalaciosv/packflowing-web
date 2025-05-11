@@ -3,6 +3,7 @@ import {
   GridColDef,
   GridRowModel,
   GridRowsProp,
+  GridSlotsComponent,
 } from "@mui/x-data-grid";
 import { Paquete } from "../firebase/firestore/paquetes";
 
@@ -18,6 +19,8 @@ interface DataTableProps {
     oldRow: GridRowModel<Paquete>
   ) => Promise<Paquete>;
   onProcessRowUpdateError?: (error: unknown) => void;
+  onSelectionModelChange: any;
+  slots: Partial<GridSlotsComponent>;
 }
 
 export default function DataTable({
@@ -26,6 +29,8 @@ export default function DataTable({
   paginationModel,
   processRowUpdate,
   onProcessRowUpdateError,
+  onSelectionModelChange,
+  slots,
 }: DataTableProps) {
   return (
     <DataGrid
@@ -37,6 +42,9 @@ export default function DataTable({
       sx={{ border: 0 }}
       processRowUpdate={processRowUpdate}
       onProcessRowUpdateError={onProcessRowUpdateError}
+      onRowSelectionModelChange={onSelectionModelChange}
+      slots={slots}
+      hideFooterSelectedRowCount
     />
   );
 }

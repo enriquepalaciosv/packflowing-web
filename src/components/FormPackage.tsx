@@ -15,6 +15,7 @@ import StepPaquetes from "./StepPaquetes";
 import StepResumen from "./StepResumen";
 import StepUsuario from "./StepUsuarios";
 import { toast } from "react-toastify";
+import { usePaqueteStore } from "../zustand/usePaquetesStore";
 
 const steps = ["Datos del usuario", "Datos Paquetes", "Detalles"];
 
@@ -49,6 +50,7 @@ export default function FormPackage({
       },
     ],
   });
+  const { fetchAllPaquetes, fetchCounts } = usePaqueteStore();
 
   const handleNext = () =>
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -65,34 +67,58 @@ export default function FormPackage({
   const handleSave = async () => {
     if (!formData.usuario || formData.paquetes.length === 0) return;
     setIsLoading(true);
+
+    const resultados = {
+      exitosos: 0,
+      fallidos: 0,
+    };
+
     try {
       for (const paquete of formData.paquetes) {
-        if (paquete.id) {
-          await updatePaquete(paquete.id, {
+        try {
+          const paqueteData = {
             ...paquete,
             idUsuario: formData.usuario.id,
-          });
-        } else {
-          await savePaquete({
-            ...paquete,
-            idUsuario: formData.usuario.id,
-          } as Paquete);
+          };
+
+          if (paquete.id) {
+            await updatePaquete(paqueteData as Paquete);
+          } else {
+            await savePaquete(paqueteData as Paquete);
+          }
+
+          resultados.exitosos++;
+        } catch (error) {
+          resultados.fallidos++;
+          console.error(`Error al guardar paquete`, paquete, error);
+          toast.error(
+            `Error en paquete con id de rastreo ${paquete.idRastreo}`
+          );
         }
       }
 
-      toast.success(
-        `${
-          formData.paquetes.length === 1
-            ? "Paquete guardado con éxito"
-            : "Paquetes guardados con éxito"
-        }`
-      );
+      if (resultados.fallidos === 0) {
+        toast.success(
+          `${resultados.exitosos} paquete${
+            resultados.exitosos > 1 ? "s" : ""
+          } guardado${resultados.exitosos > 1 ? "s" : ""} con éxito`
+        );
+      } else {
+        toast.error(
+          `${resultados.fallidos} error${
+            resultados.fallidos > 1 ? "es" : ""
+          }, ${resultados.exitosos} guardado${
+            resultados.exitosos > 1 ? "s" : ""
+          } con éxito`
+        );
+      }
     } catch (error) {
-      console.error("Error al guardar paquetes:", error);
-      toast.error("Ocurrió un error al guardar");
+      console.error("Error inesperado al guardar paquetes:", error);
+      toast.error("Ocurrió un error inesperado");
     } finally {
       setIsLoading(false);
       onClose();
+      await Promise.all([fetchAllPaquetes(), fetchCounts()]);
     }
   };
 

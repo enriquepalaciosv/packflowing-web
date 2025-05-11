@@ -4,6 +4,7 @@ import {
   AutocompleteChangeReason,
   AutocompleteInputChangeReason,
   AutocompleteRenderInputParams,
+  SxProps,
 } from "@mui/material";
 
 interface AutocompleteProps<T> {
@@ -26,31 +27,35 @@ interface AutocompleteProps<T> {
   size: "small" | "medium";
   noOptionsText: string;
   edit?: boolean;
+  sx?: SxProps;
+  disabled?: boolean;
 }
 
 export default function AutocompleteComponent<T>({
   options,
   getOptionLabel,
   onChange,
+  disabled,
   onInputChange,
   size,
   value,
   noOptionsText,
   renderInput,
   label,
+  sx = {
+    paddingTop: 4,
+    paddingBottom: 4,
+    paddingLeft: 2,
+    paddingRight: 2,
+  },
   edit = true,
 }: AutocompleteProps<T>) {
   return (
     <Autocomplete
-      sx={{
-        paddingTop: 4,
-        paddingBottom: 4,
-        paddingLeft: 2,
-        paddingRight: 2,
-      }}
+      sx={sx}
       options={options}
       value={value}
-      disabled={!edit}
+      disabled={!edit || disabled}
       noOptionsText={noOptionsText}
       size={size}
       getOptionLabel={getOptionLabel}
