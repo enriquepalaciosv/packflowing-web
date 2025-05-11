@@ -1,5 +1,7 @@
 import { getDoc, setDoc, doc } from "firebase/firestore";
 import { database } from "../..";
+import { Agency } from "../../../interfaces/Agency";
+import { toast } from "react-toastify";
 
 // Harcodear agencia
 const guardarAgenciaDefault = async () => {
@@ -56,4 +58,26 @@ const obtenerAgencia = async () => {
   }
 };
 
-export { guardarAgenciaDefault, obtenerAgencia };
+// Actualizar agencia
+const actualizarAgencia = async (agencia: Partial<Agency>) => {
+  try {
+    const docRef = doc(database, "agencia", "default");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setDoc(docRef, { ...data, ...agencia });
+      toast.success("Agencia actualizada con éxito");
+      return { ...data, ...agencia } as Agency;
+    } else {
+      console.log("No existe el documento 'default' en agencia");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error actualizando agencia: ", error);
+    toast.error("Ocurrio un error al actualizar agencia");
+    return null;
+  }
+};
+
+export { guardarAgenciaDefault, obtenerAgencia, actualizarAgencia };
