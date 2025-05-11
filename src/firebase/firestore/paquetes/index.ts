@@ -1,6 +1,5 @@
 import {
   QueryDocumentSnapshot,
-  addDoc,
   collection,
   doc,
   getCountFromServer,
@@ -11,12 +10,13 @@ import {
   orderBy,
   query,
   startAfter,
-  updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
-import { database, functions } from "../..";
-import { Usuario } from "../usuarios";
 import { httpsCallable } from "firebase/functions";
+import { database, functions } from "../..";
+import Fee from "../../../interfaces/Fee";
+import { Usuario } from "../usuarios";
 
 const ESTADOS = [
   "entregado",
@@ -35,10 +35,7 @@ export interface Paquete {
     monto: number;
     unidad: "kg" | "lb";
   };
-  tarifa: {
-    monto: number;
-    moneda: string;
-  };
+  tarifa: Fee;
   total: number;
   via: "maritimo" | "aereo";
 }
@@ -119,34 +116,87 @@ export async function fetchPaquetesLoteado(
   };
 }
 
-export async function updatePaquete(id: string, data: Partial<Paquete>) {
+export async function updatePaquete(data: Paquete) {
   try {
     const result = await guardarPaquete({ paquete: data, edit: true });
     console.log({ result });
     return result;
   } catch (error) {
     console.log({ error });
+    throw error;
   }
 }
 
-export const savePaquete = async (data: Paquete) => {
-  const fechaLocal = new Date().toLocaleString("en-US", {
-    timeZone: "America/Managua",
-  });
-  const fechaObj = new Date(fechaLocal);
-  const fecha = fechaObj.toISOString().split("T")[0];
-  const hora = fechaObj.toTimeString().slice(0, 5);
+export async function savePaquete(data: Paquete) {
+  try {
+    const result = await guardarPaquete({ paquete: data, edit: false });
+    console.log({ result });
+    return result;
+  } catch (error) {
+    console.log({ error });
+    throw error;
+  }
+}
 
-  const docRef = await addDoc(collection(database, "paquetes"), {
-    ...data,
-    rastreo: [
-      {
-        fecha,
-        hora,
-        estado: "recibido",
-      },
-    ],
-    estado: "recibido",
-  });
-  return docRef.id;
+type UpdateField = "estado" | "idUsuario" | "via" | "tarifa";
+
+export const updatePackagesInBatch = async ({
+  ids,
+  field,
+  value,
+}: {
+  ids: string[];
+  field: UpdateField;
+  value: any;
+}) => {
+  const batch = writeBatch(database);
+
+  for (const id of ids) {
+    const ref = doc(database, "paquetes", id);
+
+    if (field === "estado") {
+      const snap = await getDoc(ref);
+      if (!snap.exists()) continue;
+
+      const data = snap.data();
+      const rastreoActual = data.rastreo ?? [];
+      const fechaNicaragua = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "America/Managua" })
+      );
+      const fechaStr = fechaNicaragua.toISOString().split("T")[0];
+      const horaStr = fechaNicaragua.toTimeString().slice(0, 5);
+
+      const lastState = rastreoActual[rastreoActual.length - 1]?.estado;
+      const changeState = value !== lastState;
+
+      const nuevoRastreo = changeState
+        ? [
+            ...rastreoActual,
+            {
+              estado: value,
+              fecha: fechaStr,
+              hora: horaStr,
+            },
+          ]
+        : rastreoActual;
+
+      batch.update(ref, {
+        estado: value,
+        rastreo: nuevoRastreo,
+      });
+    } else if (field === "tarifa") {
+      const snap = await getDoc(ref);
+      if (!snap.exists()) continue;
+      const data = snap.data() as Paquete;
+      const fee = value as Fee;
+      batch.update(ref, {
+        [field]: value,
+        total: fee.monto * data.peso.monto,
+      });
+    } else {
+      batch.update(ref, { [field]: value });
+    }
+  }
+
+  await batch.commit();
 };
