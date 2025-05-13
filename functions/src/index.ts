@@ -31,8 +31,8 @@ interface Paquete {
 }
 
 export const guardarPaquete = functions.https.onCall(async (request) => {
-  const {data, auth} = request;
-  const {paquete, edit} = data;
+  const { data, auth } = request;
+  const { paquete, edit } = data;
 
   if (!auth) {
     throw new functions.https.HttpsError("unauthenticated", "No autenticado");
@@ -50,7 +50,7 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
   const limiteActual = agencia?.suscripcion?.limite ?? 0;
 
   const fechaNicaragua = new Date(
-    new Date().toLocaleString("en-US", {timeZone: "America/Managua"})
+    new Date().toLocaleString("en-US", { timeZone: "America/Managua" })
   );
   const fechaStr = fechaNicaragua.toISOString().split("T")[0];
   const horaStr = fechaNicaragua.toTimeString().slice(0, 5);
@@ -131,13 +131,13 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
     });
   }
 
-  return {success: true};
+  return { success: true };
 });
 
 export const enviarNotificacionesEnBatch = functions.https.onCall(
   async (request) => {
-    const {data, auth} = request;
-    const {paqueteIds} = data;
+    const { data, auth } = request;
+    const { paqueteIds } = data;
 
     if (!auth) {
       throw new functions.https.HttpsError("unauthenticated", "No autenticado");
@@ -161,7 +161,7 @@ export const enviarNotificacionesEnBatch = functions.https.onCall(
       await enviarNotificacion(data);
     }
 
-    return {success: true};
+    return { success: true };
   }
 );
 
@@ -173,7 +173,7 @@ export const enviarNotificacionesEnBatch = functions.https.onCall(
 async function enviarNotificacion(paquete: Paquete) {
   try {
     const usuarioSnap = await db
-      .collection("usuarios")
+      .collection("users")
       .doc(paquete.idUsuario)
       .get();
 
