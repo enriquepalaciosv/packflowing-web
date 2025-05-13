@@ -11,10 +11,12 @@ import {
 import { Paquete } from "../firebase/firestore/paquetes";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
+type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
+
 interface PaqueteItemProps {
   paquete: Partial<Paquete>;
   index: number;
-  touched: boolean;
+  touched: Partial<Record<FieldPath, boolean>>;
   onChange: (
     index: number,
     field: keyof Paquete,
@@ -23,7 +25,7 @@ interface PaqueteItemProps {
       | { monto: number; moneda: string }
       | { monto: number; unidad: "kg" | "lb" }
   ) => void;
-  onBlur: (index: number, field: keyof Paquete) => void;
+  onBlur: (index: number, field: FieldPath) => void;
   onRemove: (index: number) => void;
   disableRemove: boolean;
   edit?: boolean;
@@ -39,8 +41,6 @@ export default function PaqueteItem({
   disableRemove,
 }: PaqueteItemProps) {
   const { agencia } = useAgenciaStore();
-  const showIdRastreoError = touched && !paquete?.idRastreo?.trim();
-  const showContenidoError = touched && !paquete?.contenido?.trim();
 
   return (
     <Grid container spacing={0.5} alignItems="center" sx={{ marginTop: 2 }}>
@@ -52,7 +52,7 @@ export default function PaqueteItem({
           value={paquete.contenido}
           onBlur={(e) => onBlur(index, "contenido")}
           onChange={(e) => onChange(index, "contenido", e.target.value)}
-          error={showContenidoError}
+          error={touched?.idRastreo && !paquete?.idRastreo?.trim()}
         />
       </Grid>
       <Grid size={{ xs: 2 }}>
@@ -63,7 +63,7 @@ export default function PaqueteItem({
           value={paquete.idRastreo}
           onBlur={(e) => onBlur(index, "idRastreo")}
           onChange={(e) => onChange(index, "idRastreo", e.target.value)}
-          error={showIdRastreoError}
+          error={touched?.contenido && !paquete?.contenido?.trim()}
         />
       </Grid>
       <Grid size={{ xs: 3 }} sx={{ display: "flex", gap: 1 }}>
@@ -73,17 +73,20 @@ export default function PaqueteItem({
           label="Peso"
           type="number"
           value={paquete.peso?.monto ?? 0}
+          onBlur={(e) => onBlur(index, "peso.monto")}
           onChange={(e) =>
             onChange(index, "peso", {
               monto: Number(e.target.value),
               unidad: paquete.peso?.unidad ?? "kg",
             })
           }
+          error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
         />
 
         <Select
           size="small"
           value={paquete.peso?.unidad ?? "kg"}
+          onBlur={(e) => onBlur(index, "peso.unidad")}
           onChange={(e) =>
             onChange(index, "peso", {
               monto: paquete.peso?.monto ?? 0,
@@ -91,6 +94,7 @@ export default function PaqueteItem({
             })
           }
           sx={{ minWidth: 80 }}
+          error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
         >
           <MenuItem value="kg">kg</MenuItem>
           <MenuItem value="lb">lb</MenuItem>
@@ -105,6 +109,8 @@ export default function PaqueteItem({
             label="Vía"
             labelId={`via-label-${index}`}
             onChange={(e) => onChange(index, "via", e.target.value)}
+            onBlur={(e) => onBlur(index, "via")}
+            error={touched?.via && !paquete?.via}
           >
             <MenuItem value="aereo">Aérea</MenuItem>
             <MenuItem value="maritimo">Marítima</MenuItem>
@@ -127,6 +133,12 @@ export default function PaqueteItem({
                 // @ts-expect-error
                 JSON.parse(e.target.value)
               )
+            }
+            onBlur={(e) => onBlur(index, "tarifa")}
+            error={
+              touched?.tarifa &&
+              !paquete?.tarifa?.moneda &&
+              !paquete?.tarifa?.monto
             }
           >
             {agencia?.tarifas.map((tarifa, index) => (

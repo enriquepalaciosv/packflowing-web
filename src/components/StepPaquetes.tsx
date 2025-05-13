@@ -5,6 +5,8 @@ import PaqueteItem from "./PackageItem";
 import { Paquete } from "../firebase/firestore/paquetes";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
+type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
+
 interface Props {
   paquetes: Partial<Paquete>[];
   setPaquetes: (paquetes: Partial<Paquete>[]) => void;
@@ -22,7 +24,7 @@ export default function StepPaquetes({
 }: Props) {
   const { agencia } = useAgenciaStore();
   const [touched, setTouched] = React.useState<{
-    [index: number]: Partial<Record<keyof Paquete, boolean>>;
+    [index: number]: Partial<Record<FieldPath, boolean>>;
   }>({});
 
   const handleAgregarPaquete = () => {
@@ -41,7 +43,7 @@ export default function StepPaquetes({
     ]);
   };
 
-  const handleBlur = (index: number, field: keyof Paquete) => {
+  const handleBlur = (index: number, field: FieldPath) => {
     setTouched((prev) => ({
       ...prev,
       [index]: {
@@ -92,7 +94,7 @@ export default function StepPaquetes({
               paquete={paquete}
               onChange={handleChange}
               onRemove={handleRemove}
-              touched={!!touched[index]}
+              touched={touched[index]}
               onBlur={handleBlur}
               disableRemove={false}
             />
