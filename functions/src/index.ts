@@ -86,6 +86,10 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
     await paqueteRef.update({
       ...paquete,
       rastreo: nuevoRastreo,
+      createdAt: new admin.firestore.Timestamp(
+        paquete.createdAt.seconds,
+        paquete.createdAt.nanoseconds
+      ),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       total: paquete.tarifa.monto * paquete.peso.monto,
     });

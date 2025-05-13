@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { database } from "../..";
+import { capitalizeString } from "../../../utils/capitalizeString";
 
 export interface Usuario {
   id: string;
@@ -14,11 +15,30 @@ export interface Usuario {
 
 export async function searchUsersByFullNameOrLocker(valor: string) {
   const usuariosRef = collection(database, "users");
+  const sanitizeString = capitalizeString(valor);
 
   const [q1Snapshot, q2Snapshot, q3Snapshot] = await Promise.all([
-    getDocs(query(usuariosRef, where("name", "==", valor))),
-    getDocs(query(usuariosRef, where("lastName", "==", valor))),
-    getDocs(query(usuariosRef, where("lockerCode", "==", valor))),
+    getDocs(
+      query(
+        usuariosRef,
+        where("name", ">=", sanitizeString),
+        where("name", "<=", sanitizeString + "\uf8ff")
+      )
+    ),
+    getDocs(
+      query(
+        usuariosRef,
+        where("lastName", ">=", sanitizeString),
+        where("lastName", "<=", sanitizeString + "\uf8ff")
+      )
+    ),
+    getDocs(
+      query(
+        usuariosRef,
+        where("lockerCode", ">=", sanitizeString),
+        where("lockerCode", "<=", sanitizeString + "\uf8ff")
+      )
+    ),
   ]);
 
   const usersList = [

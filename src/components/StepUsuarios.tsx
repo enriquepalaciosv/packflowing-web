@@ -22,6 +22,7 @@ export default function StepUsuario({
   const [usuarios, setUsuarios] = React.useState<Usuario[]>([]);
 
   const handleInputChange = async (_: any, newValue: string) => {
+    console.log({ newValue });
     if (newValue.length >= 2) {
       const usuarios = await searchUsersByFullNameOrLocker(newValue);
       setUsuarios(usuarios || []);
