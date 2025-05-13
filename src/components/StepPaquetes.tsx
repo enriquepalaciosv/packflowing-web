@@ -112,7 +112,7 @@ export default function StepPaquetes({
         <Button
           onClick={handleNext}
           disabled={
-            !paquetes.every((p) => p.idRastreo?.trim() && p.contenido?.trim())
+            !paquetes.every((p) => p.idRastreo?.trim() && p.via?.trim())
           }
         >
           Siguiente
