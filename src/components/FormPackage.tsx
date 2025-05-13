@@ -47,6 +47,8 @@ export default function FormPackage({
           monto: 0,
           unidad: "kg",
         },
+        rastreo: entity?.rastreo ?? [],
+        estado: entity?.estado ?? "recibido",
       },
     ],
   });
@@ -116,9 +118,9 @@ export default function FormPackage({
       console.error("Error inesperado al guardar paquetes:", error);
       toast.error("Ocurrió un error inesperado");
     } finally {
+      await Promise.all([fetchAllPaquetes(), fetchCounts()]);
       setIsLoading(false);
       onClose();
-      await Promise.all([fetchAllPaquetes(), fetchCounts()]);
     }
   };
 

@@ -1,6 +1,7 @@
 import {
   QueryDocumentSnapshot,
   QueryFieldFilterConstraint,
+  Timestamp,
   collection,
   doc,
   getCountFromServer,
@@ -26,6 +27,12 @@ const ESTADOS = [
   "en_transito",
 ] as const;
 
+interface Rastreo {
+  estado: "entregado" | "listo_para_retirar" | "en_transito" | "recibido";
+  fecha: Timestamp;
+  hora: Timestamp;
+}
+
 export interface Paquete {
   id: string;
   idRastreo: string;
@@ -39,6 +46,9 @@ export interface Paquete {
   tarifa: Fee;
   total: number;
   via: "maritimo" | "aereo";
+  rastreo: Rastreo[];
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export interface PaqueteDto extends Paquete {
@@ -152,7 +162,8 @@ export async function updatePaquete(data: Paquete) {
 
 export async function savePaquete(data: Paquete) {
   try {
-    const result = await guardarPaquete({ paquete: data, edit: false });
+    const { id, ...paquete } = data;
+    const result = await guardarPaquete({ paquete, edit: false });
     console.log({ result });
     return result;
   } catch (error) {
