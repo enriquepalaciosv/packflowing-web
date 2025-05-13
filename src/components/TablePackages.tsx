@@ -26,14 +26,8 @@ export default function TablePackages() {
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const {
-    countTotal,
-    allPaquetes,
-    resetPackages,
-    fetchNextPage,
-    fetchAllPaquetes,
-    fetchCounts,
-  } = usePaqueteStore();
+  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts } =
+    usePaqueteStore();
 
   useEffect(() => {
     resetPackages();
@@ -189,17 +183,22 @@ export default function TablePackages() {
           columns={columns}
           paginationModel={paginationModel}
           onSelectionModelChange={setSelectionModel}
-          processRowUpdate={async (newRow, oldRow) => {
+          processRowUpdate={async (newRow: PaqueteDto, oldRow: PaqueteDto) => {
             try {
-              await updatePaquete({ ...newRow, estado: newRow.estado });
-              toast.success("Estado del paquete actualizado con éxito");
+              const { usuario, ...paquete } = newRow;
+              if (newRow.estado !== oldRow.estado) {
+                // @ts-expect-error
+                delete newRow.tarifa.nombre;
+                await updatePaquete({ ...paquete, estado: newRow.estado });
+                toast.success("Estado del paquete actualizado con éxito");
+              }
               return newRow;
             } catch (error) {
               console.error("Error al actualizar:", error);
               toast.error(`Error al actualizar estado del paquete`);
               return oldRow;
             } finally {
-              await Promise.all([fetchAllPaquetes(), fetchCounts()]);
+              await fetchCounts();
             }
           }}
           onProcessRowUpdateError={(error) => {

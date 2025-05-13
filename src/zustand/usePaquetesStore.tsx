@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import {
-  Paquete,
+  PaqueteDto,
   countPackagesByEstado,
   fetchPaquetesLoteado,
 } from "../firebase/firestore/paquetes";
@@ -13,7 +13,7 @@ type PaqueteStore = {
   countListoRetiro: number;
   countRecibido: number;
   countTotal: number;
-  allPaquetes: Paquete[];
+  allPaquetes: PaqueteDto[];
   lastDoc?: QueryDocumentSnapshot;
   hasMore: boolean;
   fetchCounts: () => Promise<void>;

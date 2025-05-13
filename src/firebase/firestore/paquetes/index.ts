@@ -99,7 +99,7 @@ export async function fetchPaquetesLoteado(
   fromDate?: Date,
   toDate?: Date
 ): Promise<{
-  paquetes: (Paquete & { usuario?: any })[]; // ← Incluye objeto usuario
+  paquetes: PaqueteDto[];
   lastDoc?: QueryDocumentSnapshot;
 }> {
   const db = getFirestore();

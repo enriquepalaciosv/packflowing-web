@@ -5,19 +5,19 @@ import {
   GridRowsProp,
   GridSlotsComponent,
 } from "@mui/x-data-grid";
-import { Paquete } from "../firebase/firestore/paquetes";
+import { PaqueteDto } from "../firebase/firestore/paquetes";
 
 interface DataTableProps {
-  rows: GridRowsProp<Paquete>;
+  rows: GridRowsProp<PaqueteDto>;
   columns: GridColDef[];
   paginationModel: {
     page: number;
     pageSize: number;
   };
   processRowUpdate?: (
-    newRow: GridRowModel<Paquete>,
-    oldRow: GridRowModel<Paquete>
-  ) => Promise<Paquete>;
+    newRow: GridRowModel<PaqueteDto>,
+    oldRow: GridRowModel<PaqueteDto>
+  ) => Promise<PaqueteDto>;
   onProcessRowUpdateError?: (error: unknown) => void;
   onSelectionModelChange: any;
   slots: Partial<GridSlotsComponent>;
