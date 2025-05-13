@@ -44,7 +44,7 @@ export default function TablePackages() {
   const handleIsOpenModal = (b?: boolean) => setIsOpen(b ?? !isOpen);
 
   const filteredRows = allPaquetes.filter((row) =>
-    row.idRastreo.includes(search)
+    row.idRastreo.includes(search.toUpperCase())
   );
 
   const handleEdit = (paquete: PaqueteDto) => {
