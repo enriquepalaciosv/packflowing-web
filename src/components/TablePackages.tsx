@@ -1,4 +1,4 @@
-import { Box, Button, Chip, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, Chip, MenuItem, Select, TextField, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {
   GridColDef,
@@ -15,6 +15,7 @@ import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
 import ModalPackagesInBatch from "./ModalPackagesInBatch";
+import { Help } from "@mui/icons-material";
 
 export default function TablePackages() {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,6 +67,16 @@ export default function TablePackages() {
     { field: "via", headerName: "Vía", width: 80 },
     {
       field: "estado",
+      renderHeader() {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            Estado
+            <Tooltip title="Presione dos veces en el estado para modificarlo">
+              <Help fontSize="small" />
+            </Tooltip>
+          </Box>
+        )
+      },
       headerName: "Estado",
       width: 150,
       editable: true,
@@ -77,15 +88,18 @@ export default function TablePackages() {
           | "recibido";
 
         return (
-          <Chip
-            label={String(estado).replaceAll("_", " ")}
-            sx={{
-              backgroundColor: COLORS_BY_STATUS[estado][0],
-              color: "#fff",
-              textTransform: "capitalize",
-              fontWeight: "bold",
-            }}
-          />
+          <>
+            <Chip
+              label={String(estado).replaceAll("_", " ")}
+              sx={{
+                backgroundColor: COLORS_BY_STATUS[estado][0],
+                color: "#fff",
+                textTransform: "capitalize",
+                fontWeight: "bold",
+                cursor: "pointer"
+              }}
+            />
+          </>
         );
       },
       renderEditCell: (params: GridRenderEditCellParams) => {
@@ -209,12 +223,12 @@ export default function TablePackages() {
               <FooterTable
                 selectedCount={selectionModel?.ids.size || 0}
                 onBatchEdit={() => setIsOpenModalInBatch(true)}
-                //   {
-                //   const selectedPaquetes = allPaquetes.filter((p) =>
-                //     selectionModel?.ids.has(p.id)
-                //   );
-                //   console.log("Editar en lote:", selectedPaquetes);
-                // }}
+              //   {
+              //   const selectedPaquetes = allPaquetes.filter((p) =>
+              //     selectionModel?.ids.has(p.id)
+              //   );
+              //   console.log("Editar en lote:", selectedPaquetes);
+              // }}
               />
             ),
           }}
