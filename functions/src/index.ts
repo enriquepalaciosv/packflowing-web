@@ -98,7 +98,9 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
       total: paquete.tarifa.monto * paquete.peso.monto,
     });
 
-    await enviarNotificacion(paquete);
+    if (seDebeAgregarNuevoEstado) {
+      await enviarNotificacion(paquete);
+    }
   } else {
     if (plan === "Básico" && limiteActual <= 0) {
       throw new functions.https.HttpsError(
@@ -187,16 +189,36 @@ async function enviarNotificacion(paquete: Paquete) {
 
     if (!usuario?.token) return;
 
+    const getBodyNotification =
+      (status:
+        "recibido"
+        | "en_transito"
+        | "listo_para_retirar"
+        | "entregado"
+      ) => {
+        switch (status) {
+          case "recibido":
+            return "Su paquete ha sido recibido."
+          case "en_transito":
+            return "Su paquete va camino a Nicaragua."
+          case "listo_para_retirar":
+            return "Su paquete está listo para retirar"
+          case "entregado":
+            return "Su paquete ha sido entregado"
+          default:
+            return
+        }
+      }
+
     const mensaje = {
       token: usuario.token,
       notification: {
-        title: "Actualización de tu paquete",
-        body: `Hola ${usuario.name}, 
-        tu paquete con ID ${paquete.idRastreo} ha sido actualizado`,
+        title: `Paquete ${paquete.idRastreo}`,
+        body: getBodyNotification(paquete.estado),
       },
       data: {
         screen: "detailPackage",
-        id: paquete.id,
+        id: paquete.idRastreo,
       },
     };
 

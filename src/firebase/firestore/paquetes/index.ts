@@ -205,13 +205,13 @@ export const updatePackagesInBatch = async ({
 
       const nuevoRastreo = changeState
         ? [
-            ...rastreoActual,
-            {
-              estado: value,
-              fecha: fechaStr,
-              hora: horaStr,
-            },
-          ]
+          ...rastreoActual,
+          {
+            estado: value,
+            fecha: fechaStr,
+            hora: horaStr,
+          },
+        ]
         : rastreoActual;
 
       batch.update(ref, {
@@ -234,14 +234,16 @@ export const updatePackagesInBatch = async ({
 
   await batch.commit();
 
-  const enviarNotificaciones = httpsCallable(
-    functions,
-    "enviarNotificacionesEnBatch"
-  );
+  if (field === "estado") { // Sólo se envían las notificaciones si se modifica el estado
+    const enviarNotificaciones = httpsCallable(
+      functions,
+      "enviarNotificacionesEnBatch"
+    );
 
-  try {
-    await enviarNotificaciones({ paqueteIds: ids });
-  } catch (error) {
-    console.error("Error enviando notificaciones:", error);
+    try {
+      await enviarNotificaciones({ paqueteIds: ids });
+    } catch (error) {
+      console.error("Error enviando notificaciones:", error);
+    }
   }
 };
