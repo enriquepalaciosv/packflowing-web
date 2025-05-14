@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 import ProfileRoute from "./screens/ProfileRoute";
 import { Agency } from "./interfaces/Agency";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
+import PrivacyPolicyScreen from "./screens/PrivacyPolicy";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
@@ -52,6 +53,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginRoute />} />
         <Route path="/reset-password" element={<ResetPasswordScreen />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
         {agencia.registrarUsuarios && (
           <Route path="/register" element={<RegisterRoute />} />
         )}
