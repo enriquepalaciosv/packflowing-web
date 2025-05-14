@@ -35,8 +35,8 @@ export async function searchUsersByFullNameOrLocker(valor: string) {
     getDocs(
       query(
         usuariosRef,
-        where("lockerCode", ">=", sanitizeString),
-        where("lockerCode", "<=", sanitizeString + "\uf8ff")
+        where("lockerCode", ">=", sanitizeString.toUpperCase()),
+        where("lockerCode", "<=", sanitizeString.toUpperCase() + "\uf8ff")
       )
     ),
   ]);
