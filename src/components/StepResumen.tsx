@@ -118,6 +118,13 @@ export default function StepResumen({
                     {paquete.tarifa?.monto ?? "-"}
                   </Typography>
                 </Grid>
+                {paquete.id && (
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <Typography>
+                      <strong>Estado:</strong> {String(paquete.estado).replaceAll("_", " ") ?? ""}
+                    </Typography>
+                  </Grid>
+                )}
               </Grid>
             </Paper>
           ))

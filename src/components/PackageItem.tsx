@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Paquete } from "../firebase/firestore/paquetes";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
+import STATUS_PACKAGES from "../utils/statusPackages";
 
 type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
 
@@ -44,7 +45,7 @@ export default function PaqueteItem({
 
   return (
     <Grid container spacing={0.5} alignItems="center" sx={{ marginTop: 2 }}>
-      <Grid size={{ xs: 2 }}>
+      <Grid size={{  xs: paquete.id ? 1.5 : 2  }}>
         <TextField
           fullWidth
           label="Id de rastreo"
@@ -55,7 +56,7 @@ export default function PaqueteItem({
           error={touched?.idRastreo && !paquete?.idRastreo?.trim()}
         />
       </Grid>
-      <Grid size={{ xs: 2 }}>
+      <Grid size={{ xs: paquete.id ? 1.5 : 2 }}>
         <FormControl fullWidth>
           <InputLabel id={`via-label-${index}`}>Vía</InputLabel>
           <Select
@@ -83,40 +84,97 @@ export default function PaqueteItem({
         // error={touched?.contenido && !paquete?.contenido?.trim()}
         />
       </Grid>
-      <Grid size={{ xs: 3 }} sx={{ display: "flex", gap: 1 }}>
-        <TextField
-          fullWidth
-          size="small"
-          label="Peso"
-          type="number"
-          value={paquete.peso?.monto ?? 0}
-          // onBlur={(e) => onBlur(index, "peso.monto")}
-          onChange={(e) =>
-            onChange(index, "peso", {
-              monto: Number(e.target.value),
-              unidad: paquete.peso?.unidad ?? "kg",
-            })
-          }
-        // error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
-        />
+      {paquete.id ? (
+        <>
+          <Grid size={{ xs: 3 }} sx={{ display: "flex", gap: 1 }}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Peso"
+              type="number"
+              value={paquete.peso?.monto ?? 0}
+              // onBlur={(e) => onBlur(index, "peso.monto")}
+              onChange={(e) =>
+                onChange(index, "peso", {
+                  monto: Number(e.target.value),
+                  unidad: paquete.peso?.unidad ?? "kg",
+                })
+              }
+            // error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
+            />
 
-        <Select
-          size="small"
-          value={paquete.peso?.unidad ?? "kg"}
-          // onBlur={(e) => onBlur(index, "peso.unidad")}
-          onChange={(e) =>
-            onChange(index, "peso", {
-              monto: paquete.peso?.monto ?? 0,
-              unidad: e.target.value as "kg" | "lb",
-            })
-          }
-          sx={{ minWidth: 80 }}
-        // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
-        >
-          <MenuItem value="kg">kg</MenuItem>
-          <MenuItem value="lb">lb</MenuItem>
-        </Select>
-      </Grid>
+            <Select
+              size="small"
+              value={paquete.peso?.unidad ?? "kg"}
+              // onBlur={(e) => onBlur(index, "peso.unidad")}
+              onChange={(e) =>
+                onChange(index, "peso", {
+                  monto: paquete.peso?.monto ?? 0,
+                  unidad: e.target.value as "kg" | "lb",
+                })
+              }
+              sx={{ minWidth: 80 }}
+            // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
+            >
+              <MenuItem value="kg">kg</MenuItem>
+              <MenuItem value="lb">lb</MenuItem>
+            </Select>
+          </Grid>
+          <Grid size={{ xs: 1.5 }} sx={{ display: "flex", gap: 1 }}>
+            <Select
+              size="small"
+              value={paquete.estado}
+              // onBlur={(e) => onBlur(index, "peso.unidad")}
+              onChange={(e) =>
+                onChange(index, "estado", e.target.value)
+              }
+              sx={{ minWidth: 80 }}
+            // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
+            >
+              {STATUS_PACKAGES.map((status) => (
+                <MenuItem key={status} value={status}>
+                  {status.replaceAll("_", " ")}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </>
+      ) : (
+        <Grid size={{ xs: 3 }} sx={{ display: "flex", gap: 1 }}>
+          <TextField
+            fullWidth
+            size="small"
+            label="Peso"
+            type="number"
+            value={paquete.peso?.monto ?? 0}
+            // onBlur={(e) => onBlur(index, "peso.monto")}
+            onChange={(e) =>
+              onChange(index, "peso", {
+                monto: Number(e.target.value),
+                unidad: paquete.peso?.unidad ?? "kg",
+              })
+            }
+          // error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
+          />
+
+          <Select
+            size="small"
+            value={paquete.peso?.unidad ?? "kg"}
+            // onBlur={(e) => onBlur(index, "peso.unidad")}
+            onChange={(e) =>
+              onChange(index, "peso", {
+                monto: paquete.peso?.monto ?? 0,
+                unidad: e.target.value as "kg" | "lb",
+              })
+            }
+            sx={{ minWidth: 80 }}
+          // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
+          >
+            <MenuItem value="kg">kg</MenuItem>
+            <MenuItem value="lb">lb</MenuItem>
+          </Select>
+        </Grid>
+      )}
       <Grid size={{ xs: 2 }} sx={{ display: "flex" }}>
         <FormControl
           fullWidth
@@ -153,7 +211,7 @@ export default function PaqueteItem({
           </Select>
         </FormControl>
       </Grid>
-      <Grid size={{ xs: 1 }}>
+      <Grid size={{ xs: paquete.id ? .5 : 1 }}>
         <IconButton onClick={() => onRemove(index)} disabled={disableRemove}>
           <Delete />
         </IconButton>
