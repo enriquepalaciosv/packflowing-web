@@ -42,13 +42,15 @@ export default function FormPackage({
         idRastreo: entity?.idRastreo ?? "",
         via: entity?.via ?? "aereo",
         contenido: entity?.contenido ?? undefined,
-        tarifa: entity?.tarifa ?? agencia?.tarifas[0],
+        tarifa: entity?.tarifa ?? undefined,
         peso: entity?.peso ?? {
           monto: 0,
           unidad: "kg",
         },
         rastreo: entity?.rastreo ?? [],
         estado: entity?.estado ?? "recibido",
+        createdAt: entity?.createdAt,
+        updatedAt: entity?.updatedAt
       },
     ],
   });

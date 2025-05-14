@@ -80,7 +80,7 @@ export default function PaqueteItem({
           value={paquete.contenido}
           // onBlur={(e) => onBlur(index, "contenido")}
           onChange={(e) => onChange(index, "contenido", e.target.value)}
-          // error={touched?.contenido && !paquete?.contenido?.trim()}
+        // error={touched?.contenido && !paquete?.contenido?.trim()}
         />
       </Grid>
       <Grid size={{ xs: 3 }} sx={{ display: "flex", gap: 1 }}>
@@ -97,7 +97,7 @@ export default function PaqueteItem({
               unidad: paquete.peso?.unidad ?? "kg",
             })
           }
-          // error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
+        // error={touched?.["peso.monto"] && Number(paquete?.peso?.monto) <= 0}
         />
 
         <Select
@@ -111,36 +111,40 @@ export default function PaqueteItem({
             })
           }
           sx={{ minWidth: 80 }}
-          // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
+        // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
         >
           <MenuItem value="kg">kg</MenuItem>
           <MenuItem value="lb">lb</MenuItem>
         </Select>
       </Grid>
       <Grid size={{ xs: 2 }} sx={{ display: "flex" }}>
-        <FormControl fullWidth>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          size="small"
+        >
           <InputLabel id={`tarifa-label-${index}`}>Tarifa</InputLabel>
           <Select
             size="small"
-            value={paquete.tarifa}
-            renderValue={(tarifa) => `${tarifa.moneda} ${tarifa.monto}`}
+            value={paquete.tarifa ? JSON.stringify(paquete.tarifa) : ""}
+            renderValue={(tarifaString) => {
+              if (!tarifaString) return "Seleccionar tarifa";
+              const tarifa = JSON.parse(tarifaString);
+              return `${tarifa.monto} ${tarifa.moneda} - ${tarifa.nombre}`;
+            }}
             label="Tarifa"
             labelId={`tarifa-label-${index}`}
             onChange={(e) =>
               onChange(
                 index,
                 "tarifa",
-                // @ts-expect-error
-                JSON.parse(e.target.value)
+                e.target.value ? JSON.parse(e.target.value) : null
               )
             }
-            // onBlur={(e) => onBlur(index, "tarifa")}
-            // error={
-            //   touched?.tarifa &&
-            //   !paquete?.tarifa?.moneda &&
-            //   !paquete?.tarifa?.monto
-            // }
           >
+            <MenuItem value="">
+              <em>Seleccionar tarifa</em>
+            </MenuItem>
             {agencia?.tarifas.map((tarifa, index) => (
               <MenuItem value={JSON.stringify(tarifa)}>
                 {tarifa.nombre} - {tarifa.moneda} {tarifa.monto}

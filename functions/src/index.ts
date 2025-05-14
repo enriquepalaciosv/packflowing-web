@@ -83,13 +83,17 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
       });
     }
 
+    const createdAt = paquete.createdAt?.seconds &&
+      paquete.createdAt?.nanoseconds ?
+      new admin.firestore.Timestamp(
+        paquete.createdAt.seconds,
+        paquete.createdAt.nanoseconds
+      ) : paquete.createdAt;
+
     await paqueteRef.update({
       ...paquete,
       rastreo: nuevoRastreo,
-      createdAt: new admin.firestore.Timestamp(
-        paquete.createdAt.seconds,
-        paquete.createdAt.nanoseconds
-      ),
+      createdAt,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       total: paquete.tarifa.monto * paquete.peso.monto,
     });
@@ -113,7 +117,7 @@ export const guardarPaquete = functions.https.onCall(async (request) => {
       ...paquete,
       rastreo: [rastreoInicial],
       estado: "recibido",
-      total: paquete.tarifa.monto * paquete.peso.monto,
+      total: paquete.tarifa ? paquete.tarifa?.monto * paquete.peso?.monto : 0,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });

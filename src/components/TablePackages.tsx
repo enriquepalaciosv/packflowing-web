@@ -188,7 +188,7 @@ export default function TablePackages() {
               const { usuario, ...paquete } = newRow;
               if (newRow.estado !== oldRow.estado) {
                 // @ts-expect-error
-                delete newRow.tarifa.nombre;
+                delete newRow?.tarifa?.nombre;
                 await updatePaquete({ ...paquete, estado: newRow.estado });
                 toast.success("Estado del paquete actualizado con éxito");
               }
