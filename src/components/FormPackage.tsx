@@ -50,7 +50,8 @@ export default function FormPackage({
         rastreo: entity?.rastreo ?? [],
         estado: entity?.estado ?? "recibido",
         createdAt: entity?.createdAt,
-        updatedAt: entity?.updatedAt
+        updatedAt: entity?.updatedAt,
+        observaciones: entity?.observaciones
       },
     ],
   });

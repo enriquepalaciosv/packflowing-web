@@ -49,6 +49,7 @@ export interface Paquete {
   rastreo: Rastreo[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  observaciones?: string
 }
 
 export interface PaqueteDto extends Paquete {

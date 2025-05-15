@@ -31,113 +31,124 @@ interface Paquete {
 }
 
 export const guardarPaquete = functions.https.onCall(async (request) => {
-  const { data, auth } = request;
-  const { paquete, edit } = data;
+  try {
+    const { data, auth } = request;
+    const { paquete, edit } = data;
 
-  if (!auth) {
-    throw new functions.https.HttpsError("unauthenticated", "No autenticado");
-  }
+    if (!auth) {
+      throw new functions.https.HttpsError("unauthenticated", "No autenticado");
+    }
 
-  const agenciaRef = db.collection("agencia").doc("default");
-  const agenciaSnap = await agenciaRef.get();
+    const agenciaRef = db.collection("agencia").doc("default");
+    const agenciaSnap = await agenciaRef.get();
 
-  if (!agenciaSnap.exists) {
-    throw new functions.https.HttpsError("not-found", "Agencia no encontrada");
-  }
-
-  const agencia = agenciaSnap.data();
-  const plan = agencia?.suscripcion?.plan ?? "";
-  const limiteActual = agencia?.suscripcion?.limite ?? 0;
-
-  const fechaNicaragua = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "America/Managua" })
-  );
-  const fechaStr = fechaNicaragua.toISOString().split("T")[0];
-  const horaStr = fechaNicaragua.toTimeString().slice(0, 5);
-
-  const paquetesRef = db.collection("paquetes");
-
-  if (edit && paquete.id) {
-    const paqueteRef = paquetesRef.doc(paquete.id);
-    const paqueteSnap = await paqueteRef.get();
-
-    if (!paqueteSnap.exists) {
+    if (!agenciaSnap.exists) {
       throw new functions.https.HttpsError(
         "not-found",
-        "Paquete no encontrado"
+        "Agencia no encontrada"
       );
     }
 
-    const datosActuales = paqueteSnap.data();
-    const rastreoActual = datosActuales?.rastreo ?? [];
-    const ultimoEstado = rastreoActual[rastreoActual.length - 1]?.estado;
+    const agencia = agenciaSnap.data();
+    const plan = agencia?.suscripcion?.plan ?? "";
+    const limiteActual = agencia?.suscripcion?.limite ?? 0;
 
-    const nuevoRastreo = [...rastreoActual];
-    const seDebeAgregarNuevoEstado = paquete.estado !== ultimoEstado;
+    const fechaNicaragua = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Managua" })
+    );
+    const fechaStr = fechaNicaragua.toISOString().split("T")[0];
+    const horaStr = fechaNicaragua.toTimeString().slice(0, 5);
 
-    if (seDebeAgregarNuevoEstado) {
-      nuevoRastreo.push({
+    const paquetesRef = db.collection("paquetes");
+
+    if (edit && paquete.id) {
+      const paqueteRef = paquetesRef.doc(paquete.id);
+      const paqueteSnap = await paqueteRef.get();
+
+      if (!paqueteSnap.exists) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Paquete no encontrado"
+        );
+      }
+
+      const datosActuales = paqueteSnap.data();
+      const rastreoActual = datosActuales?.rastreo ?? [];
+      const ultimoEstado = rastreoActual[rastreoActual.length - 1]?.estado;
+
+      const nuevoRastreo = [...rastreoActual];
+      const seDebeAgregarNuevoEstado = paquete.estado !== ultimoEstado;
+
+      if (seDebeAgregarNuevoEstado) {
+        nuevoRastreo.push({
+          fecha: fechaStr,
+          hora: horaStr,
+          estado: paquete.estado,
+        });
+      }
+
+      const createdAt = paquete.createdAt?.seconds &&
+        paquete.createdAt?.nanoseconds ?
+        new admin.firestore.Timestamp(
+          paquete.createdAt.seconds,
+          paquete.createdAt.nanoseconds
+        ) : paquete.createdAt;
+
+      await paqueteRef.update({
+        ...paquete,
+        rastreo: nuevoRastreo,
+        createdAt,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        total: paquete.tarifa ? paquete.tarifa?.monto * paquete.peso?.monto : 0,
+      });
+
+      if (seDebeAgregarNuevoEstado) {
+        await enviarNotificacion(paquete);
+      }
+    } else {
+      if (plan === "Básico" && limiteActual <= 0) {
+        throw new functions.https.HttpsError(
+          "resource-exhausted",
+          "Límite insuficiente"
+        );
+      }
+
+      const rastreoInicial = {
         fecha: fechaStr,
         hora: horaStr,
-        estado: paquete.estado,
+        estado: "recibido",
+      };
+
+      const nuevoPaqueteRef = await paquetesRef.add({
+        ...paquete,
+        rastreo: [rastreoInicial],
+        estado: "recibido",
+        total: paquete.tarifa ? paquete.tarifa?.monto * paquete.peso?.monto : 0,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      if (plan === "Básico") {
+        await agenciaRef.update({
+          "suscripcion.limite": admin.firestore.FieldValue.increment(-1),
+        });
+      }
+
+      await enviarNotificacion({
+        ...paquete,
+        id: nuevoPaqueteRef.id,
+        estado: "recibido",
       });
     }
 
-    const createdAt = paquete.createdAt?.seconds &&
-      paquete.createdAt?.nanoseconds ?
-      new admin.firestore.Timestamp(
-        paquete.createdAt.seconds,
-        paquete.createdAt.nanoseconds
-      ) : paquete.createdAt;
-
-    await paqueteRef.update({
-      ...paquete,
-      rastreo: nuevoRastreo,
-      createdAt,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      total: paquete.tarifa.monto * paquete.peso.monto,
-    });
-
-    if (seDebeAgregarNuevoEstado) {
-      await enviarNotificacion(paquete);
-    }
-  } else {
-    if (plan === "Básico" && limiteActual <= 0) {
-      throw new functions.https.HttpsError(
-        "resource-exhausted",
-        "Límite insuficiente"
-      );
-    }
-
-    const rastreoInicial = {
-      fecha: fechaStr,
-      hora: horaStr,
-      estado: "recibido",
-    };
-
-    const nuevoPaqueteRef = await paquetesRef.add({
-      ...paquete,
-      rastreo: [rastreoInicial],
-      estado: "recibido",
-      total: paquete.tarifa ? paquete.tarifa?.monto * paquete.peso?.monto : 0,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    if (plan === "Básico") {
-      await agenciaRef.update({
-        "suscripcion.limite": admin.firestore.FieldValue.increment(-1),
-      });
-    }
-
-    await enviarNotificacion({
-      ...paquete,
-      id: nuevoPaqueteRef.id,
-      estado: "recibido",
-    });
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error en guardarPaquete:", error);
+    throw new functions.https.HttpsError(
+      "internal",
+      error.message || "Error inesperado"
+    );
   }
-
-  return { success: true };
 });
 
 export const enviarNotificacionesEnBatch = functions.https.onCall(
@@ -208,7 +219,7 @@ async function enviarNotificacion(paquete: Paquete) {
           default:
             return
         }
-      }
+      };
 
     const mensaje = {
       token: usuario.token,

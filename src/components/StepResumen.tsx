@@ -118,6 +118,12 @@ export default function StepResumen({
                     {paquete.tarifa?.monto ?? "-"}
                   </Typography>
                 </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <Typography>
+                    <strong>Observaciones:</strong>
+                    {paquete.observaciones ?? "-"}
+                  </Typography>
+                </Grid>
                 {paquete.id && (
                   <Grid size={{ xs: 12, sm: 4 }}>
                     <Typography>
