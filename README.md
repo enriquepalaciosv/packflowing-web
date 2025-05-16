@@ -177,3 +177,83 @@ Idioma de la plantilla
 En el email se puede observar un link, este link redirige a una pantalla por defecto que brinda Firebase Auth, es un simple formulario donde se ingresa la nueva contraseña, y se envía. La página debería mostrar un mensaje de confirmación "Ahora puedes acceder con tu contraseña nueva"
 
 Este link se puede cambiar por una URL de acción personalizada, por ejemplo alguna URL con un formulario ó otra opción es personalizar el servicio **sendPasswordResetEmail** para que el link abra la app 
+
+## Pantalla de Inicio
+
+Esta pantalla muestra tres componentes principales: 
+
+* Formulario con dos inputs: **Desde** y **Hasta** estos valores son usados para obtener los datos que se muestran en los demás componentes
+
+Cada vez que se modifican estos inputs, se realizan las peticiones a la base de datos para obtener la información dentro del rango de fecha seleccionado
+
+* Estadisticas de los paquetes por estado; contabiliza la cantidad de paquetes en los distintos estados dentro del rango de fecha seleccionado 
+
+* Y por último, la tabla que muestra toda la información sobre los paquetes así como también la información del usuario asociado 
+
+Esta tabla cuenta con paginación desde el servidor (Firebase), obtiene los primeros 100 productos (ordenados por el campo **idRastreo**) mostrando un total de 20 productos por página, una vez que el usuario llega a la página 6, se obtienen los próximos 100 elementos, y así sucesivamente. También se obtiene el número total de elementos dentro de ese rango de fecha, sólo a modo de visualizar la cantidad total de elementos
+
+En el lado superior de la tabla, aparece un input, este permite poder filtrar por sólo por el campo **IdRastreo**. 
+
+También aparece un botón para poder crear nuevos paquetes, este botón abre un modal donde se muestra un formulario multi steps.
+
+Dentro de la tabla, como última columna aparece un botón para poder editar el paquete en cuestión.
+
+Si el administrador selecciona varias columnas de la lista, se puede visualizar al final de la tabla un botón **Editar en Lote**, este botón abre un modal el cual permite editar todas las columnas seleccionadas
+
+### Crear/Editar paquetes 
+
+El formulario multi steps para la edicción o creación de paquetes consta de 3 pasos
+
+* El primero muestra un **Autocomplete** de usuarios, donde el administrador de ingresar el **nombre**, **apellido** ó **lockerCode** del usuario para que se realice la búsqueda y muestre las opciones. La búsqueda se realiza por coincidencia exacta, es decir, debe escribir el campo tal cual aparece en la base de datos 
+
+* El segundo paso es información sobre paquete(s), puede agregar uno ó más, la información que se le pide es la siguiente **Contenido**, **idRastreo**, **peso** y **unidad**, **tarifa** que muestra un listado de las tarifas guardadas de la agencia
+
+* El último paso muestra los detalles; la información del usuario y un listado de paquete(s) a crear 
+
+Una vez enviado el formulario, este llama a una **Firebase Function** llamada **guardarPaquete**
+
+#### Configurar Firebase Function
+
+Lo primero que debe hacer es actualizar el plan de su proyecto a **Blaze**, ya que Firebase no permite usar Function en la versión gratuita
+
+Desde la consola de Firebase, al final del menú lateral figura su plan actual (debería ser **Spark**). Le va a pedir una cuenta de facturación, en caso de que su consumo supere los limites gratuitos
+
+Dentro del repositorio, se creo la carpeta **functions** que contiene un proyecto con las **Firebase Functions**
+
+El primero paso es instalar **Firebase CLI**
+```
+npm install -g firebase-tools
+```
+
+Una vez instalada, debes loguearte, se debe seleccionar la cuenta con la que fue creada el proyecto
+
+```
+firebase login
+```
+
+Ya logueado, debes hacer compilar, instalar las dependencias y hacer un deploy de las funciones, para esto debes posicionarte dentro de la carpeta **functions**
+
+```
+cd functions
+npm install
+npx eslint . --ext .ts --fix // Corrige errores de estilo o sintaxis
+npm run build
+```
+
+Por último, sólo resta hacer el deploy 
+
+```
+firebase deploy --only functions
+```
+
+La función **guardarPaquete** permite crear o actualizar un paquete, manejando validaciones del plan de la agencia y el estado del paquete.
+
+Para la creación, se registra un nuevo paquete con el estado inicial **Recibido**, se registra el primer evento en el historial del rastreo, agrega el campo **createdAt** con fecha y hora de Nicaragua (America/Managua) y si el plan de la agencia es **Básico** se descuenta del limite mensual. Y por último, si el usuario asociado al paquete contiene **token FCM** se le envía una notificación.
+
+En la actualización, se compara el estado actual y el anterior, si son distintos se agrega un nuevo evento al historial de rastreo, se actualiza el campo **updatedAt** y se le envía al usuario una notificación sobre este cambio.
+
+## Actualización en lote 
+
+Se puede realizar actualiaciones en lote cuando el usuario haya seleccionado una o más filas. Los campos que se puede modificar son **Usuario**, **Estado**, **Vía** y **Tarifa**
+
+Hay una **Cloud Function** para el envío masivo de notificaciones, es decir, una vez actualizado todos los paquetes seleccionados, se le notifica a cada usuario asociado el cambio realizo. Esta funcion es **enviarNotificacionesEnBatch** que basicamente recibe un array de ids de paquetes, obtiene el usuario y le envía la notificación
