@@ -12,6 +12,7 @@ import { auth, database } from "../../firebase";
 import getCustomErrorMessage from "../../utils/firebaseErrors";
 import { FirebaseError } from "firebase/app";
 import generateLockerCode from "../../utils/generateLockerCode";
+import { capitalizeString } from "../../utils/capitalizeString";
 
 interface UserAdminRegister {
   name: string;
@@ -55,8 +56,8 @@ export async function registerUserService(user: Partial<UserAdminRegister>) {
 
     // Guardar usuario en Firestore
     await setDoc(doc(database, "users", uid), {
-      name,
-      lastName,
+      name: capitalizeString(name),
+      lastName: capitalizeString(lastName),
       email,
       countryCode,
       token: "", // Este campo se completa cuando el usuario inicia sesión desde la app
