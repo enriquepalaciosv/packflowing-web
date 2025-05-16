@@ -16,7 +16,6 @@ const PrivacyPolicy = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      console.log(window.scrollY)
       if (!navRef.current) return;
       setTimeout(() => {
         setIsFixed(window.scrollY >= 350);
@@ -30,7 +29,7 @@ const PrivacyPolicy = () => {
   return (
     <>
       {/* Encabezado y texto */}
-      <Container maxWidth="xl" sx={{ py: 2 }}>
+      <Container maxWidth="xl" sx={{ py: 2, px: "2rem", backgroundColor: "#f5f5f5" }}>
         <AppBar
           position="static"
           color="transparent"
@@ -42,11 +41,11 @@ const PrivacyPolicy = () => {
           </Toolbar>
         </AppBar>
 
-        <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ mt: 2, mb: "4rem", display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography
             variant="h1"
-            fontSize={50}
-            fontWeight={900}
+            fontSize={"3.75rem"}
+            fontWeight={600}
             textAlign="center"
           >
             Política de privacidad de Pack Flowing
@@ -57,7 +56,9 @@ const PrivacyPolicy = () => {
             fontWeight={500}
             width="75%"
             marginX="auto"
-            lineHeight={1.75}
+            lineHeight={1.625}
+            fontSize="1rem"
+            color="#1f2937"
           >
 
             En Pack Flowing, nuestra principal prioridad es proteger la privacidad de nuestros clientes. Nos
@@ -69,8 +70,8 @@ const PrivacyPolicy = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 9 }}>
+        <Grid container spacing={4} justifyContent={"center"}>
+          <Grid size={{ xs: 8 }}>
             <Section
               id="data-we-collect"
               title="1. Información que recopilamos"
@@ -78,11 +79,11 @@ const PrivacyPolicy = () => {
                 'Recopilamos información personal de nuestros clientes con el propósito de ofrecer servicios de paquetería eficientes y personalizados. La información que recopilamos incluye:',
               ]}
               listItems={[
-                'Nombre completo: Recopilamos el nombre completo de nuestros clientes para identificarlos de manera única en nuestros sistemas y proporcionar un servicio personalizado.',
-                'Dirección de correo electrónico: Solicitamos la dirección de correo electrónico para comunicarnos con nuestros clientes sobre el estado de los envíos, enviar actualizaciones y brindar información relevante sobre nuestros servicios.',
-                'Dirección de domicilio: La dirección de domicilio se recopila para asegurar la correcta entrega de los paquetes y garantizar la eficiencia en nuestro servicio de paquetería.',
-                'Ubicación en tiempo real: En algunos casos, podemos solicitar acceso a la ubicación en tiempo real de nuestros clientes a través de la aplicación para ofrecer servicios de seguimiento de envíos en vivo. Este acceso será opcional y con consentimiento explícito.',
-                'Número de teléfono: Recopilamos el número de teléfono para facilitar la comunicación con nuestros clientes, brindar notificaciones importantes y ofrecer soporte.',
+                '<b>1. Nombre completo:</b> Recopilamos el nombre completo de nuestros clientes para identificarlos de manera única en nuestros sistemas y proporcionar un servicio personalizado.',
+                '<b>2. Dirección de correo electrónico:</b> Solicitamos la dirección de correo electrónico para comunicarnos con nuestros clientes sobre el estado de los envíos, enviar actualizaciones y brindar información relevante sobre nuestros servicios.',
+                '<b>3. Dirección de domicilio:</b> La dirección de domicilio se recopila para asegurar la correcta entrega de los paquetes y garantizar la eficiencia en nuestro servicio de paquetería.',
+                '<b>4. Ubicación en tiempo real:</b> En algunos casos, podemos solicitar acceso a la ubicación en tiempo real de nuestros clientes a través de la aplicación para ofrecer servicios de seguimiento de envíos en vivo. Este acceso será opcional y con consentimiento explícito.',
+                '<b>5. Número de teléfono:</b> Recopilamos el número de teléfono para facilitar la comunicación con nuestros clientes, brindar notificaciones importantes y ofrecer soporte.',
               ]}
               finalParagraph="Esta información es fundamental para asegurar la correcta entrega de los paquetes y mantener una comunicación efectiva. En Pack Flowing nos comprometemos a tratar esta información con la más alta confidencialidad, cumpliendo con todas las normas de privacidad."
             />
@@ -94,12 +95,12 @@ const PrivacyPolicy = () => {
                 'La información personal que recopilamos se utiliza con el propósito de ofrecer servicios de paquetería eficientes y personalizados, así como para mejorar la experiencia del cliente.',
               ]}
               listItems={[
-                'Procesar pedidos',
-                'Comunicarnos con el cliente sobre el estado del pedido',
-                'Enviar actualizaciones',
-                'Enviar promociones',
-                'Enviar notificaciones y avisos',
-                'Atención al cliente',
+                '1. Procesar pedidos',
+                '2. Comunicarnos con el cliente sobre el estado del pedido',
+                '3. Enviar actualizaciones',
+                '4. Enviar promociones',
+                '5. Enviar notificaciones y avisos',
+                '6. Atención al cliente',
               ]}
               finalParagraph="Nos comprometemos a utilizar esta información de manera responsable, segura y cumpliendo con los más altos estándares de privacidad y seguridad."
             />
@@ -157,15 +158,35 @@ const PrivacyPolicy = () => {
               }}
             >
               <Typography variant="h6">En esta página</Typography>
-              <Stack spacing={1} mt={1}>
-                <Link href="#data-we-collect">1. Información que recopilamos</Link>
-                <Link href="#how-we-use-the-information">2. Cómo utilizamos la información</Link>
-                <Link href="#how-we-protect-the-information">3. Cómo protegemos la información</Link>
-                <Link href="#how-to-access-or-modify-your-information">
-                  4. Cómo acceder o modificar su información
-                </Link>
-                <Link href="#privacy-policy-changes">5. Cambios a esta política de privacidad</Link>
-                <Link href="#get-in-touch">6. Contacto</Link>
+              <Stack spacing={1} mt={2} gap=".75rem">
+                {[
+                  {
+                    href: "#data-we-collect",
+                    title: "1. Información que recopilamos"
+                  },
+                  {
+                    href: "#how-we-use-the-information",
+                    title: "2. Cómo utilizamos la información"
+                  },
+                  {
+                    href: "#how-we-protect-the-information",
+                    title: "3. Cómo protegemos la información"
+                  },
+                  {
+                    href: "#how-to-access-or-modify-your-information",
+                    title: "4. Cómo acceder o modificar su información"
+                  },
+                  {
+                    href: "#privacy-policy-changes",
+                    title: "5. Cambios a esta política de privacidad"
+                  },
+                  {
+                    href: "#get-in-touch",
+                    title: "6. Contacto"
+                  }
+                ].map(linkItem => (
+                  <Link sx={{ textDecoration: "none", color: "#6b7280", fontWeight: 600, fontSize: "0.875rem" }} href={linkItem.href}>{linkItem.title}</Link>
+                ))}
               </Stack>
             </Box>
           </Grid>
@@ -191,25 +212,38 @@ const Section = ({
   finalParagraph?: string;
 }) => (
   <Box id={id} mt={4}>
-    <Typography variant="h6" component="h3" gutterBottom>
+    <Typography
+      variant="h6"
+      component="h3"
+      gutterBottom
+      marginBottom="1rem"
+      fontSize="1.5rem"
+      fontWeight={600}
+    >
       {title}
     </Typography>
-    <Stack spacing={2}>
+
+    <Stack spacing={2} gap="1rem">
       {paragraphs.map((text, i) => (
         <Typography key={i}>{text}</Typography>
       ))}
+
       {listItems.length > 0 && (
-        <ul>
+        <ul style={{ listStyle: "none", paddingLeft: 0 }}>
           {listItems.map((item, i) => (
-            <li key={i}>
-              <Typography component="span">{item}</Typography>
+            <li key={i} style={{ marginBlockEnd: "1rem" }}>
+              <Typography
+                component="span"
+                dangerouslySetInnerHTML={{ __html: item }}
+              />
             </li>
           ))}
         </ul>
       )}
-      {finalParagraph && <Typography>{finalParagraph}</Typography>}
     </Stack>
+    {finalParagraph && <Typography>{finalParagraph}</Typography>}
   </Box>
 );
+
 
 export default PrivacyPolicy;
