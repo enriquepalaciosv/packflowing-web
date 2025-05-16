@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { PaqueteDto } from "../firebase/firestore/paquetes";
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 function loadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -29,6 +30,7 @@ function loadImageAsBase64(url: string): Promise<string> {
 }
 
 export default async function exportPDF(fileName: string, rows: PaqueteDto[]) {
+  const { agencia } = useAgenciaStore();
   const doc = new jsPDF({ orientation: "landscape" });
 
   const logoUrl = "/logo.png";
@@ -41,7 +43,7 @@ export default async function exportPDF(fileName: string, rows: PaqueteDto[]) {
   }
 
   doc.setFontSize(18);
-  doc.text("Pack Flowing", 30, 20);
+  doc.text(agencia?.nombre ?? "", 30, 20);
 
   if (logoBase64) {
     doc.addImage(logoBase64, "PNG", 15, 10, 10, 10);
