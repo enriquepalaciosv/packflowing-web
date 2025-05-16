@@ -15,9 +15,8 @@ import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
 import ModalPackagesInBatch from "./ModalPackagesInBatch";
-import PictureAsPdf from "@mui/icons-material/PictureAsPdf";
-import exportPDF from "../utils/exportToPDF";
-import { Help } from "@mui/icons-material";
+import { exportPDF, exportExcel } from "../utils/exportTable";
+import { Help, PictureAsPdf, TableView } from "@mui/icons-material";
 import { useDateRangeStore } from "../zustand/useDateRangeStore";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
@@ -199,11 +198,43 @@ export default function TablePackages() {
               paginationModel.page * paginationModel.pageSize,
               (paginationModel.page + 1) * paginationModel.pageSize
             ).length}
-            onClick={() =>
-              exportPDF(`${fechaInicio.format("DD/MM/YYYY")}-${fechaFin.format("DD/MM/YYYY")}.pdf`, filteredRows, agencia?.nombre ?? "")
-            }
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.pdf`
+              exportPDF(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
           >
-            <PictureAsPdf />
+            <Tooltip title="Exportar como archivo PDF">
+              <PictureAsPdf />
+            </Tooltip>
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.xlsx`
+              exportExcel(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
+          >
+            <Tooltip title="Exportar como archivo .xlsx">
+              <TableView />
+            </Tooltip>
           </Button>
         </Box>
 
