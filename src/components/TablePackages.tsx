@@ -15,9 +15,13 @@ import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
 import ModalPackagesInBatch from "./ModalPackagesInBatch";
+import PictureAsPdf from "@mui/icons-material/PictureAsPdf";
+import exportPDF from "../utils/exportToPDF";
 import { Help } from "@mui/icons-material";
+import { useDateRangeStore } from "../zustand/useDateRangeStore";
 
 export default function TablePackages() {
+  const { fechaInicio, fechaFin } = useDateRangeStore();
   const [isOpen, setIsOpen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -27,7 +31,7 @@ export default function TablePackages() {
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts } =
+  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts, fetchAllPaquetes } =
     usePaqueteStore();
 
   useEffect(() => {
@@ -186,6 +190,18 @@ export default function TablePackages() {
             size="small"
           >
             Crear
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() =>
+              exportPDF(`${fechaInicio.format("DD/MM/YYYY")}-${fechaFin.format("DD/MM/YYYY")}.pdf`, filteredRows)
+            }
+          >
+            <PictureAsPdf />
           </Button>
         </Box>
 
