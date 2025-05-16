@@ -262,6 +262,8 @@ Hay una **Cloud Function** para el envío masivo de notificaciones, es decir, un
 
 ## Reporte
 
-En la tabla se puede observar un botón que dice **PDF**, sólo estará habilitado si la lista contiene paquetes. Al hacer click se descarga un pdf con el listado actual con los campos del paquete.
+En la tabla se puede observar un botón con el icono de **PDF** y otro con el icono de **Table**, sólo estaran habilitado si la lista contiene paquetes. Al hacer click en el primero se descarga un pdf con el listado actual con los campos del paquete.
 
 El PDF incluye un header con el nombre de la agencia y el logo. Como nombre incluye las fechas seleccionada, por ejemplo, para las fechas 14/05/2025 a 16/05/2025, el nombre del PDF sería "14_05_2025-16_05_2025.pdf"
+
+En el segundo boton se descargará el mismo archivo pero en formato **.xlsx**, con el mismo **Header** y nombre que el **PDF**

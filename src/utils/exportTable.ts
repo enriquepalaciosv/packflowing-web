@@ -42,14 +42,15 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
     console.warn("No se pudo cargar el logo:", error);
   }
 
-  doc.setFontSize(18);
   // Name's agency
+  doc.setFontSize(18);
   doc.text(name, 30, 20);
   // Range of dates
-  doc.text(range, 30, 50);
+  doc.setFontSize(14);
+  doc.text(range, 90, 20);
 
   if (logoBase64) {
-    doc.addImage(logoBase64, "PNG", 15, 10, 10, 10);
+    doc.addImage(logoBase64, "PNG", 15, 12.5, 10, 10);
   }
 
   const tableColumn = [
