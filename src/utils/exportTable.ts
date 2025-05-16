@@ -5,6 +5,8 @@ import autoTable from "jspdf-autotable";
 import { PaqueteDto } from "../firebase/firestore/paquetes";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+
 
 function loadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -46,8 +48,9 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
   doc.setFontSize(18);
   doc.text(name, 30, 20);
   // Range of dates
+  const fechaActual = dayjs().format("DD/MM/YYYY");
   doc.setFontSize(14);
-  doc.text(range, 90, 20);
+  doc.text(fechaActual, 90, 20);
 
   if (logoBase64) {
     doc.addImage(logoBase64, "PNG", 15, 12.5, 10, 10);
@@ -112,7 +115,8 @@ export async function exportExcel(
   }
   sheet.getCell("B1").value = agencyName;
   sheet.getCell("B1").font = { bold: true, size: 16 };
-  sheet.getCell("B2").value = dateRange;
+  const fechaActual = dayjs().format("DD/MM/YYYY");
+  sheet.getCell("B2").value = fechaActual;
   sheet.getCell("B2").font = { italic: true, size: 12 };
 
   const headers = [
