@@ -19,9 +19,11 @@ import PictureAsPdf from "@mui/icons-material/PictureAsPdf";
 import exportPDF from "../utils/exportToPDF";
 import { Help } from "@mui/icons-material";
 import { useDateRangeStore } from "../zustand/useDateRangeStore";
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 export default function TablePackages() {
   const { fechaInicio, fechaFin } = useDateRangeStore();
+  const { agencia } = useAgenciaStore()
   const [isOpen, setIsOpen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -198,7 +200,7 @@ export default function TablePackages() {
               (paginationModel.page + 1) * paginationModel.pageSize
             ).length}
             onClick={() =>
-              exportPDF(`${fechaInicio.format("DD/MM/YYYY")}-${fechaFin.format("DD/MM/YYYY")}.pdf`, filteredRows)
+              exportPDF(`${fechaInicio.format("DD/MM/YYYY")}-${fechaFin.format("DD/MM/YYYY")}.pdf`, filteredRows, agencia?.nombre ?? "")
             }
           >
             <PictureAsPdf />

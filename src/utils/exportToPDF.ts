@@ -29,8 +29,7 @@ function loadImageAsBase64(url: string): Promise<string> {
   });
 }
 
-export default async function exportPDF(fileName: string, rows: PaqueteDto[]) {
-  const { agencia } = useAgenciaStore();
+export default async function exportPDF(fileName: string, rows: PaqueteDto[], name: string) {
   const doc = new jsPDF({ orientation: "landscape" });
 
   const logoUrl = "/logo.png";
@@ -43,7 +42,7 @@ export default async function exportPDF(fileName: string, rows: PaqueteDto[]) {
   }
 
   doc.setFontSize(18);
-  doc.text(agencia?.nombre ?? "", 30, 20);
+  doc.text(name, 30, 20);
 
   if (logoBase64) {
     doc.addImage(logoBase64, "PNG", 15, 10, 10, 10);
