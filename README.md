@@ -204,11 +204,11 @@ Si el administrador selecciona varias columnas de la lista, se puede visualizar 
 
 El formulario multi steps para la edicción o creación de paquetes consta de 3 pasos
 
-* El primero muestra un **Autocomplete** de usuarios, donde el administrador de ingresar el **nombre**, **apellido** ó **lockerCode** del usuario para que se realice la búsqueda y muestre las opciones. La búsqueda se realiza por coincidencia exacta, es decir, debe escribir el campo tal cual aparece en la base de datos 
+* El primero muestra un **Autocomplete** de usuarios, donde el administrador de ingresar el **nombre**, **apellido** ó **lockerCode** del usuario para que se realice la búsqueda y muestre las opciones. La búsqueda se realiza por coincidencia parcial, es decir, si ingreso "jua" mostraría los usuarios con nombre, apellido ó lockerCode que comiencen con "jua"
 
-* El segundo paso es información sobre paquete(s), puede agregar uno ó más, la información que se le pide es la siguiente **Contenido**, **idRastreo**, **peso** y **unidad**, **tarifa** que muestra un listado de las tarifas guardadas de la agencia
+* El segundo paso es información sobre paquete(s), puede agregar uno ó más, la información que se le pide es la siguiente  **idRastreo**, **vía**, **contenido**, **peso** y **unidad**, **observaciones** y **tarifa** que muestra un listado de las tarifas guardadas de la agencia. Cuando se edita un paquete, aparece un campo más para modificar el **estado** del paquete
 
-* El último paso muestra los detalles; la información del usuario y un listado de paquete(s) a crear 
+* El último paso muestra los detalles; la información del usuario y un listado de paquete(s) a crear/editar 
 
 Una vez enviado el formulario, este llama a una **Firebase Function** llamada **guardarPaquete**
 
@@ -252,8 +252,16 @@ Para la creación, se registra un nuevo paquete con el estado inicial **Recibido
 
 En la actualización, se compara el estado actual y el anterior, si son distintos se agrega un nuevo evento al historial de rastreo, se actualiza el campo **updatedAt** y se le envía al usuario una notificación sobre este cambio.
 
+Las notificaciones sólo son enviadas cuando se modifica el estado del paquete, en la creación se envía siempre y en la edicción sólo si el estado cambio
+
 ## Actualización en lote 
 
 Se puede realizar actualiaciones en lote cuando el usuario haya seleccionado una o más filas. Los campos que se puede modificar son **Usuario**, **Estado**, **Vía** y **Tarifa**
 
 Hay una **Cloud Function** para el envío masivo de notificaciones, es decir, una vez actualizado todos los paquetes seleccionados, se le notifica a cada usuario asociado el cambio realizo. Esta funcion es **enviarNotificacionesEnBatch** que basicamente recibe un array de ids de paquetes, obtiene el usuario y le envía la notificación
+
+## Reporte
+
+En la tabla se puede observar un botón que dice **PDF**, sólo estará habilitado si la lista contiene paquetes. Al hacer click se descarga un pdf con el listado actual con los campos del paquete.
+
+El PDF incluye un header con el nombre de la agencia y el logo
