@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import useRegisterFormik from "../../hooks/useRegisterHook";
 import { useNavigate } from "react-router-dom";
-import InputFormik from "../../components/InputFormik";
-import SelectCountryCodes from "../../components/SelectCountryCodes";
+import InputFormik from "../../components/inputs/InputFormik";
+import SelectCountryCodes from "../../components/inputs/SelectCountryCodes";
 import useBreakpoint from "../../utils/useBreakpoint";
 
 export default function RegisterScreen() {

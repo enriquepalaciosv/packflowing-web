@@ -1,10 +1,10 @@
 import { Box, Button, TextField } from "@mui/material";
-import AutocompleteComponent from "./Autocomplete";
+import AutocompleteComponent from "../inputs/Autocomplete";
 import React from "react";
 import {
   Usuario,
   searchUsersByFullNameOrLocker,
-} from "../firebase/firestore/usuarios";
+} from "../../firebase/firestore/usuarios";
 
 export default function StepUsuario({
   selectedUser,

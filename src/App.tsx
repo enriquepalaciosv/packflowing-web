@@ -57,7 +57,7 @@ function App() {
           )}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomeRoute />} />
-            <Route path="/profile" element={<ProfileRoute />} />
+            <Route path="/settings" element={<ProfileRoute />} />
           </Route>
 
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />

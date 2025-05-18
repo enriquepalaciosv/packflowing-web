@@ -1,5 +1,5 @@
-import { PaqueteDto } from "../firebase/firestore/paquetes";
-import FormPackage from "./FormPackage";
+import { PaqueteDto } from "../../firebase/firestore/paquetes";
+import FormPackage from "../packages/FormPackage";
 import Modal from "./Modal";
 
 export default function ModalFormPackage({

@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
-import { Paquete } from "../firebase/firestore/paquetes";
-import { Usuario } from "../firebase/firestore/usuarios";
+import { Paquete } from "../../firebase/firestore/paquetes";
+import { Usuario } from "../../firebase/firestore/usuarios";
 
 interface Props {
   selectedUser: Usuario;

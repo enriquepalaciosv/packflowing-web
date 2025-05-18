@@ -1,8 +1,8 @@
 import { Box, Button, Container, FormGroup, Typography } from "@mui/material";
 import { Save, Add } from "@mui/icons-material";
 import AppBar from "../components/AppBar";
-import FeeItem from "../components/FeeItem";
-import InputFormik from "../components/InputFormik";
+import FeeItem from "../components/inputs/FeeItem";
+import InputFormik from "../components/inputs/InputFormik";
 import NavBar from "../components/NavBar";
 import useProfileFormik from "../hooks/useProfileHook";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";

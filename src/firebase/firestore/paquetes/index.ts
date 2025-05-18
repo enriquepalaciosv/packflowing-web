@@ -3,6 +3,7 @@ import {
   QueryFieldFilterConstraint,
   Timestamp,
   collection,
+  deleteDoc,
   doc,
   getCountFromServer,
   getDoc,
@@ -246,5 +247,15 @@ export const updatePackagesInBatch = async ({
     } catch (error) {
       console.error("Error enviando notificaciones:", error);
     }
+  }
+};
+
+export const deletePackage = async (id: string) => {
+  try {
+    await deleteDoc(doc(database, 'paquetes', id));
+    console.log(`Paquete con ID ${id} eliminado exitosamente.`);
+  } catch (error) {
+    console.error('Error al eliminar el paquete:', error);
+    throw error;
   }
 };
