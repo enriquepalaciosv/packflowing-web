@@ -47,10 +47,20 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
   // Name's agency
   doc.setFontSize(18);
   doc.text(name, 30, 20);
+
+  // Generation date
+  const fechaActual = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
   // Range of dates
-  const fechaActual = dayjs().format("DD/MM/YYYY");
-  doc.setFontSize(14);
-  doc.text(fechaActual, 90, 20);
+  const rangeText = "Paquetes desde " + range;
+
+  doc.setFontSize(12);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const fechaTextWidth = doc.getTextWidth(fechaActual);
+  const rangeTextWidth = doc.getTextWidth(rangeText);
+
+  doc.text(fechaActual, pageWidth - fechaTextWidth - 30, 17.5);
+  doc.text(rangeText, pageWidth - rangeTextWidth - 30, 22.5);
 
   if (logoBase64) {
     doc.addImage(logoBase64, "PNG", 15, 12.5, 10, 10);
@@ -101,6 +111,7 @@ export async function exportExcel(
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet("Paquetes");
 
+  // Image base 64
   const logoUrl = "/logo.png";
   const base64 = await loadImageAsBase64(logoUrl);
   const imageId = workbook.addImage({
@@ -108,16 +119,42 @@ export async function exportExcel(
     extension: "png",
   });
 
-  sheet.addImage(imageId, 'A1:A2');
+  sheet.addImage(imageId, {
+    tl: { col: 0 + 0.25, row: 0 + 0.2 },
+    ext: { width: 45, height: 45 },
+  });
 
   sheet.getCell("A1").border = {
     bottom: { style: 'thin', color: { argb: 'FFFFFFFF' } },
   }
+  
+  // Generation date
+  const generationDate = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
+  // Range of dates
+  const rangeText = "Paquetes desde " + dateRange;
+
+  // Merge cells A1:A2 (Logo)
+  sheet.mergeCells("A1:A2");
+  sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+  // Merge cells B1:B2 (Name)
+  sheet.mergeCells("B1:C2");
+  sheet.getCell('B1').alignment = { horizontal: 'center', vertical: 'middle' };
+  // Merge cells F1:G1 (Generation date)
+  sheet.mergeCells("F1:G1");
+  sheet.getCell('F1').alignment = { horizontal: 'right', vertical: 'middle' };
+  // Merge cells F1:G1 (range of dates)
+  sheet.mergeCells("F2:G2");
+  sheet.getCell('F2').alignment = { horizontal: 'right', vertical: 'middle' };
+
+  // Add name's agency
   sheet.getCell("B1").value = agencyName;
   sheet.getCell("B1").font = { bold: true, size: 16 };
-  const fechaActual = dayjs().format("DD/MM/YYYY");
-  sheet.getCell("B2").value = fechaActual;
-  sheet.getCell("B2").font = { italic: true, size: 12 };
+  // Add generation date
+  sheet.getCell("F1").value = generationDate;
+  sheet.getCell("F1").font = { bold: true, size: 12 };
+  // Add range of dates
+  sheet.getCell("F2").value = rangeText;
+  sheet.getCell("F2").font = { bold: true, size: 12 };
 
   const headers = [
     "ID",
@@ -129,8 +166,11 @@ export async function exportExcel(
     "Total",
   ];
 
+  sheet.addRow(1);
+  
   const headerRow = sheet.addRow(headers);
 
+  // Row column names
   headerRow.eachCell((cell) => {
     cell.font = { bold: true };
     cell.alignment = { vertical: "middle", horizontal: "center" };
@@ -147,7 +187,7 @@ export async function exportExcel(
     };
   });
 
-  // Filas de datos
+  // Data row
   rows.forEach((row) => {
     const fechaActualizacion =
       row.updatedAt instanceof Timestamp
@@ -174,13 +214,9 @@ export async function exportExcel(
     column.width = maxLength + 2;
   });
 
-  sheet.getColumn(1).width = 20;
-
-  const colWidth = sheet.getColumn(1).width ?? 10;
-
-  const altura = colWidth * 1.5;
-  sheet.getRow(1).height = altura;
-  sheet.getRow(2).height = altura;
+  sheet.getColumn(1).width = 12;
+  sheet.getRow(1).height = 20;
+  sheet.getRow(2).height = 20;
 
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
