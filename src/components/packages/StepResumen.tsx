@@ -46,7 +46,7 @@ export default function StepResumen({
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography>
-                  <strong>Locker:</strong> {selectedUser.lockerCode}
+                  <strong>Cliente:</strong> {selectedUser.lockerCode}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>

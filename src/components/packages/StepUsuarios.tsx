@@ -49,7 +49,7 @@ export default function StepUsuario({
         onInputChange={handleInputChange}
         onChange={(_, value) => value && setSelectedUser(value)}
         renderInput={(params) => (
-          <TextField {...params} label="Buscar usuario por nombre o locker" />
+          <TextField {...params} label="Buscar usuario por nombre o cliente" />
         )}
       />
       <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>

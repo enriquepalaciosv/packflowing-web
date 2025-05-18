@@ -165,7 +165,7 @@ export default function FormPackagesInBatch({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Buscar usuario por nombre o locker"
+                label="Buscar usuario por nombre o cliente"
               />
             )}
             sx={{ width: "80%" }}
