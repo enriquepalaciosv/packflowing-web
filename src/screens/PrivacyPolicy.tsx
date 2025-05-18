@@ -9,9 +9,11 @@ import {
   Typography
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 const PrivacyPolicy = () => {
   const navRef = useRef(null);
+  const { agencia } = useAgenciaStore();
   const [isFixed, setIsFixed] = useState(false);
 
   useEffect(() => {
@@ -139,8 +141,8 @@ const PrivacyPolicy = () => {
               title="6. Contacto"
               paragraphs={[
                 'Si tiene alguna pregunta acerca de nuestra Política de Privacidad o sobre cómo utilizamos su información personal, puede comunicarse con nosotros:',
-                'Correo electrónico: packflowing@gmail.com',
-                'Teléfono: +505 8575 4255',
+                'Correo electrónico: soporte@packflowing.com',
+                'Teléfono: ' + agencia?.contacto,
               ]}
             />
           </Grid>
