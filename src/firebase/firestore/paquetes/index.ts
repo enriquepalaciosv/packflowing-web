@@ -259,3 +259,23 @@ export const deletePackage = async (id: string) => {
     throw error;
   }
 };
+
+export async function contarPaquetesDelMes() {
+
+  const ahora = Timestamp.now();
+
+  const ahoraDate = ahora.toDate();
+  const inicioMes = new Date(ahoraDate.getFullYear(), ahoraDate.getMonth(), 1, 0, 0, 0);
+  const timestampInicioMes = Timestamp.fromDate(inicioMes);
+
+  const paquetesRef = collection(database, "paquetes");
+  const q = query(
+    paquetesRef,
+    where("createdAt", ">=", timestampInicioMes),
+    where("createdAt", "<=", ahora)
+  );
+
+  const snapshot = await getCountFromServer(q);
+
+  return snapshot.data().count;
+}

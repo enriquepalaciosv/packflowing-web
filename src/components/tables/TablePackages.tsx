@@ -62,9 +62,9 @@ export default function TablePackages() {
     setEntity(undefined);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     // Validate credits
-    if (validateCreditsAgency(agencia)) {
+    if (await validateCreditsAgency(agencia)) {
       // Validate has rates
       if (validateHasRates(agencia)) {
         handleIsOpenModal();

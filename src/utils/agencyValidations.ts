@@ -1,19 +1,20 @@
+import { contarPaquetesDelMes } from "../firebase/firestore/paquetes";
 import { Agency } from "../interfaces/Agency";
 
-// Return true is plan
-const validateCreditsAgency = (agency: Agency | null) => {
+// Devuelve false si la cantidad de paquetes creados en el mes supera el limite del plan
+const validateCreditsAgency = async (agency: Agency | null) => {
     if (!agency) return false;
 
-    if (agency.suscripcion.plan === "Básico") {
-        if (agency.suscripcion.limite > 0) {
-            return true
-        } else {
-            return false
-        }
-    } else {
+    // Si el limite es cero puede crear
+    if(!agency.suscripcion.limite) return true;
+
+    const cantidadActual = await contarPaquetesDelMes();
+
+    if (agency.suscripcion.limite <= cantidadActual) {
+        return false
+    } else { 
         return true
     }
-
 };
 
 const validateHasRates = (agency: Agency | null) => {
