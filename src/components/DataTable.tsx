@@ -4,28 +4,28 @@ import {
   GridRowModel,
   GridRowsProp,
   GridSlotsComponent,
+  GridValidRowModel,
 } from "@mui/x-data-grid";
-import { PaqueteDto } from "../firebase/firestore/paquetes";
 
-interface DataTableProps {
-  rows: GridRowsProp<PaqueteDto>;
+interface DataTableProps<T extends GridValidRowModel> {
+  rows: GridRowsProp<T>;
   columns: GridColDef[];
   paginationModel: {
     page: number;
     pageSize: number;
   };
   processRowUpdate?: (
-    newRow: GridRowModel<PaqueteDto>,
-    oldRow: GridRowModel<PaqueteDto>
-  ) => Promise<PaqueteDto>;
+    newRow: GridRowModel<T>,
+    oldRow: GridRowModel<T>
+  ) => Promise<T>;
   onProcessRowUpdateError?: (error: unknown) => void;
-  onSelectionModelChange: any;
+  onSelectionModelChange: (selectionModel: any) => void;
   slots: Partial<GridSlotsComponent>;
-  onPaginationModelChange: any;
+  onPaginationModelChange: (model: { page: number; pageSize: number }) => void;
   rowCount: number;
 }
 
-export default function DataTable({
+export default function DataTable<T extends GridValidRowModel>({
   rows,
   rowCount,
   columns,
@@ -35,7 +35,7 @@ export default function DataTable({
   onSelectionModelChange,
   slots,
   onPaginationModelChange,
-}: DataTableProps) {
+}: DataTableProps<T>) {
   return (
     <DataGrid
       rows={rows}
