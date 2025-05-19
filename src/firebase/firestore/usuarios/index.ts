@@ -1,6 +1,7 @@
-import { collection, getCountFromServer, getDocs, limit, orderBy, query, QueryDocumentSnapshot, startAfter, where } from "firebase/firestore";
+import { collection, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, where } from "firebase/firestore";
 import { database } from "../..";
 import { capitalizeString } from "../../../utils/capitalizeString";
+import { toast } from "react-toastify";
 
 export interface Usuario {
   id: string;
@@ -91,6 +92,24 @@ export async function fetchUsuariosLoteado(
     usuarios: usuariosRaw,
     lastDoc: lastVisible
   };
+}
+
+export async function updateUsuario(id: string, usuario: Partial<Usuario>) {
+  try {
+    const docRef = doc(database, "users", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setDoc(docRef, { ...data, ...usuario });
+      toast.success("Usuario actualizado con éxito");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error actualizando usuario: ", error);
+    toast.error("Ocurrio un error al actualizar usuario");
+    return null;
+  }
 }
 
 export async function countUsuarios() {
