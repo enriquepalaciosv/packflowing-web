@@ -14,6 +14,7 @@ import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
 import { seedRandomPackages } from "./hardcode";
+import UsersRoute from "./screens/UsersRoute";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
@@ -58,6 +59,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomeRoute />} />
             <Route path="/profile" element={<ProfileRoute />} />
+            <Route path="/users" element={<UsersRoute />} />
           </Route>
 
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
