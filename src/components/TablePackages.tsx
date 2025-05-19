@@ -15,9 +15,14 @@ import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormPackage from "./ModalPackage";
 import ModalPackagesInBatch from "./ModalPackagesInBatch";
-import { Help } from "@mui/icons-material";
+import { exportPDF, exportExcel } from "../utils/exportTable";
+import { Help, PictureAsPdf, TableView } from "@mui/icons-material";
+import { useDateRangeStore } from "../zustand/useDateRangeStore";
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 export default function TablePackages() {
+  const { fechaInicio, fechaFin } = useDateRangeStore();
+  const { agencia } = useAgenciaStore()
   const [isOpen, setIsOpen] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -27,7 +32,7 @@ export default function TablePackages() {
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts } =
+  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts, fetchAllPaquetes } =
     usePaqueteStore();
 
   useEffect(() => {
@@ -186,6 +191,50 @@ export default function TablePackages() {
             size="small"
           >
             Crear
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.pdf`
+              exportPDF(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
+          >
+            <Tooltip title="Exportar como archivo PDF">
+              <PictureAsPdf />
+            </Tooltip>
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.xlsx`
+              exportExcel(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
+          >
+            <Tooltip title="Exportar como archivo .xlsx">
+              <TableView />
+            </Tooltip>
           </Button>
         </Box>
 
