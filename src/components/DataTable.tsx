@@ -23,6 +23,7 @@ interface DataTableProps<T extends GridValidRowModel> {
   slots: Partial<GridSlotsComponent>;
   onPaginationModelChange: (model: { page: number; pageSize: number }) => void;
   rowCount: number;
+  checkboxSelection?: boolean
 }
 
 export default function DataTable<T extends GridValidRowModel>({
@@ -32,6 +33,7 @@ export default function DataTable<T extends GridValidRowModel>({
   paginationModel,
   processRowUpdate,
   onProcessRowUpdateError,
+  checkboxSelection = true,
   onSelectionModelChange,
   slots,
   onPaginationModelChange,
@@ -42,7 +44,7 @@ export default function DataTable<T extends GridValidRowModel>({
       columns={columns}
       initialState={{ pagination: { paginationModel } }}
       pageSizeOptions={[20]}
-      checkboxSelection
+      checkboxSelection={checkboxSelection}
       sx={{ border: 0 }}
       processRowUpdate={processRowUpdate}
       onProcessRowUpdateError={onProcessRowUpdateError}
