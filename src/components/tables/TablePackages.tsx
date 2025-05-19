@@ -15,15 +15,18 @@ import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormPackage from "../modals/ModalPackage";
 import ModalPackagesInBatch from "../modals/ModalPackagesInBatch";
-import { Delete, Edit, Help } from "@mui/icons-material";
+import { Delete, Edit, Help, PictureAsPdf, TableView } from "@mui/icons-material";
 import { validateCreditsAgency, validateHasRates } from "../../utils/agencyValidations";
 import { useAgenciaStore } from "../../zustand/useAgenciaStore";
 import ModalNoCredit from "../modals/ModalNoCredit";
 import ModalHasNotRates from "../modals/ModalHasNotRates";
 import ModalDeletePackage from "../modals/ModalDeletePackage";
+import { exportPDF, exportExcel } from "../../utils/exportTable";
+import { useDateRangeStore } from "../../zustand/useDateRangeStore";
 
 export default function TablePackages() {
-  const { agencia } = useAgenciaStore();
+  const { fechaInicio, fechaFin } = useDateRangeStore();
+  const { agencia } = useAgenciaStore()
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenModalNoCredit, setIsOpenModalNoCredit] = useState(false);
   const [isOpenModalDeletePackage, setIsOpenModalDeletePackage] = useState(false);
@@ -37,7 +40,7 @@ export default function TablePackages() {
   const [entity, setEntity] = useState<PaqueteDto>();
   const [packageForDelete, setPackageForDelete] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts } =
+  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts, fetchAllPaquetes } =
     usePaqueteStore();
 
   useEffect(() => {
@@ -244,6 +247,50 @@ export default function TablePackages() {
             size="small"
           >
             Crear
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.pdf`
+              exportPDF(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
+          >
+            <Tooltip title="Exportar como archivo PDF">
+              <PictureAsPdf />
+            </Tooltip>
+          </Button>
+          <Button
+            size="small"
+            disabled={!filteredRows.slice(
+              paginationModel.page * paginationModel.pageSize,
+              (paginationModel.page + 1) * paginationModel.pageSize
+            ).length}
+            onClick={() => {
+              const fechaInicioFormateada = fechaInicio.format("DD/MM/YYYY");
+              const fechaFinFormateada = fechaFin.format("DD/MM/YYYY")
+              const fileName = `${fechaInicioFormateada}-${fechaFinFormateada}.xlsx`
+              exportExcel(
+                fileName,
+                filteredRows,
+                agencia?.nombre ?? "",
+                fechaInicioFormateada + " a " + fechaFinFormateada
+              )
+            }}
+          >
+            <Tooltip title="Exportar como archivo .xlsx">
+              <TableView />
+            </Tooltip>
           </Button>
         </Box>
 
