@@ -2,7 +2,8 @@ export type StatusText =
   | "Paquetes recibidos"
   | "Paquetes en tránsito"
   | "Paquetes listos para recoger"
-  | "Paquetes entregados";
+  | "Paquetes entregados"
+  | "Usuarios registrados";
 
 export type PackageTitle =
   | "Paquete recibido"
