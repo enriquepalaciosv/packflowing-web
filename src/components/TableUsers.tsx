@@ -2,17 +2,16 @@ import { Box, Button, TextField } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {
     GridColDef,
+    GridPagination,
     GridRowSelectionModel
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { PaqueteDto } from "../firebase/firestore/paquetes";
 import { Usuario } from "../firebase/firestore/usuarios";
 import { useUsuariosStore } from "../zustand/useUsuariosStore";
 import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
-import ModalFormPackage from "./ModalPackage";
-import ModalPackagesInBatch from "./ModalPackagesInBatch";
+import ModalFormUser from "./ModalFormUser";
 
 export default function TableUsers() {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,12 +19,12 @@ export default function TableUsers() {
         page: 0,
         pageSize: 20,
     });
-    const [isOpenModalInBatch, setIsOpenModalInBatch] = useState(false);
+    const [_, setIsOpenModalInBatch] = useState(false);
     const [search, setSearch] = useState("");
-    const [entity, setEntity] = useState<PaqueteDto>();
+    const [entity, setEntity] = useState<Usuario>();
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
 
-    const { countTotal, allUsuarios, resetUsuarios, fetchNextPage, fetchCounts } = useUsuariosStore();
+    const { countTotal, allUsuarios, resetUsuarios, fetchNextPage } = useUsuariosStore();
 
     useEffect(() => {
         resetUsuarios();
@@ -47,8 +46,8 @@ export default function TableUsers() {
         );
     });
 
-    const handleEdit = (paquete: PaqueteDto) => {
-        setEntity(paquete);
+    const handleEdit = (usuario: Usuario) => {
+        setEntity(usuario);
         setIsOpen(!isOpen);
     };
 
@@ -58,7 +57,7 @@ export default function TableUsers() {
     };
 
     const columns: GridColDef[] = [
-        { field: "id", headerName: "ID", width: 200 },
+        { field: "id", headerName: "ID", width: 270 },
         { field: "lockerCode", headerName: "Cliente", width: 120 },
         { field: "name", headerName: "Nombre", width: 120 },
         { field: "lastName", headerName: "Apellido", width: 120 },
@@ -90,16 +89,11 @@ export default function TableUsers() {
 
     return (
         <>
-            <ModalFormPackage
+            {entity && <ModalFormUser
                 isOpen={isOpen}
                 onClose={handleCloseModal}
                 entity={entity}
-            />
-            <ModalPackagesInBatch
-                isOpen={isOpenModalInBatch}
-                onClose={() => setIsOpenModalInBatch(false)}
-                ids={selectionModel?.ids}
-            />
+            />}
             <Paper sx={{ padding: 2, width: "auto", marginTop: 2 }}>
                 <Box
                     sx={{
@@ -116,13 +110,15 @@ export default function TableUsers() {
                         size="small"
                         sx={{ width: "90%" }}
                     />
-                    <Button
-                        variant="contained"
-                        onClick={() => handleIsOpenModal()}
-                        size="small"
-                    >
-                        Crear
-                    </Button>
+                    {/**
+                        <Button
+                            variant="contained"
+                            onClick={() => handleIsOpenModal()}
+                            size="small"
+                        >
+                            Crear
+                        </Button>
+                    */}
                 </Box>
 
                 <DataTable<Usuario>
@@ -133,34 +129,9 @@ export default function TableUsers() {
                     columns={columns}
                     paginationModel={paginationModel}
                     onSelectionModelChange={setSelectionModel}
-                    processRowUpdate={async (newRow: Usuario, oldRow: Usuario) => {
-                        try {
-                            // const { usuario, ...paquete } = newRow;
-                            // if (newRow.estado !== oldRow.estado) {
-                            //     // @ts-expect-error
-                            //     delete newRow?.tarifa?.nombre;
-                            //     await updatePaquete({ ...paquete, estado: newRow.estado });
-                            //     toast.success("Estado del paquete actualizado con éxito");
-                            // }
-                            return newRow;
-                        } catch (error) {
-                            console.error("Error al actualizar:", error);
-                            toast.error(`Error al actualizar estado del paquete`);
-                            return oldRow;
-                        } finally {
-                            await fetchCounts();
-                        }
-                    }}
-                    onProcessRowUpdateError={(error) => {
-                        console.error("Error al procesar actualización:", error);
-                    }}
+                    checkboxSelection={false}
                     slots={{
-                        footer: () => (
-                            <FooterTable
-                                selectedCount={selectionModel?.ids.size || 0}
-                                onBatchEdit={() => setIsOpenModalInBatch(true)}
-                            />
-                        ),
+                        footer: () => <GridPagination />,
                     }}
                     onPaginationModelChange={async (newModel: {
                         page: number;
