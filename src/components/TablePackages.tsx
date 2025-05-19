@@ -189,7 +189,7 @@ export default function TablePackages() {
           </Button>
         </Box>
 
-        <DataTable
+        <DataTable<PaqueteDto>
           rows={filteredRows.slice(
             paginationModel.page * paginationModel.pageSize,
             (paginationModel.page + 1) * paginationModel.pageSize
