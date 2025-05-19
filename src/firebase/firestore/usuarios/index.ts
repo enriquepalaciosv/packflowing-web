@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getCountFromServer, getDocs, limit, orderBy, query, QueryDocumentSnapshot, startAfter, where } from "firebase/firestore";
 import { database } from "../..";
 import { capitalizeString } from "../../../utils/capitalizeString";
 
@@ -61,4 +61,44 @@ export async function searchUsersByFullNameOrLocker(valor: string) {
   );
 
   return uniqueUsers as Usuario[];
+}
+
+export async function fetchUsuariosLoteado(
+  lastDoc?: QueryDocumentSnapshot,
+): Promise<{
+  usuarios: Usuario[];
+  lastDoc?: QueryDocumentSnapshot;
+}> {
+  const usuariosRef = collection(database, "users");
+
+  const usuariosQuery = query(
+    usuariosRef,
+    orderBy("lockerCode", "desc"),
+    ...(lastDoc ? [startAfter(lastDoc)] : []),
+    limit(100)
+  );
+
+  const snapshot = await getDocs(usuariosQuery);
+
+  const usuariosRaw = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Partial<Usuario>),
+  })) as Usuario[];
+
+  const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+  return {
+    usuarios: usuariosRaw,
+    lastDoc: lastVisible
+  };
+}
+
+export async function countUsuarios() {
+  const usuariosRef = collection(database, "users");
+
+  const queryUsuarios = query(usuariosRef);
+  const snapshot = await getCountFromServer(queryUsuarios);
+  const total = snapshot.data().count;
+
+  return total
 }
