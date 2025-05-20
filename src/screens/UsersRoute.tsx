@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import AppBar from "../components/AppBar";
 import CardStatistic from "../components/CardStatistic";
 import NavBar from "../components/NavBar";
-import TableUsers from "../components/TableUsers";
+import TableUsers from "../components/tables/TableUsers";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { useUsuariosStore } from "../zustand/useUsuariosStore";
 

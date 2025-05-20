@@ -1,5 +1,5 @@
-import { Usuario } from "../firebase/firestore/usuarios";
-import FormUser from "./FormUser";
+import { Usuario } from "../../firebase/firestore/usuarios";
+import FormUser from "../users/FormUser";
 import Modal from "./Modal";
 
 export default function ModalFormUser({

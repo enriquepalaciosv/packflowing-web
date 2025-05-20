@@ -1,9 +1,9 @@
 import { Box, Button, DialogContent, Grid, Stack } from "@mui/material";
-import { Usuario } from "../firebase/firestore/usuarios";
-import useUserFormik from "../hooks/useUserHook";
-import useBreakpoint from "../utils/useBreakpoint";
-import InputFormik from "./InputFormik";
-import SelectCountryCodes from "./SelectCountryCodes";
+import { Usuario } from "../../firebase/firestore/usuarios";
+import useUserFormik from "../../hooks/useUserHook";
+import useBreakpoint from "../../utils/useBreakpoint";
+import InputFormik from "../inputs/InputFormik";
+import SelectCountryCodes from "../inputs/SelectCountryCodes";
 
 
 export default function FormUser({

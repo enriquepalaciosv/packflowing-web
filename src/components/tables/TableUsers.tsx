@@ -1,3 +1,4 @@
+import { Edit, PictureAsPdf, TableView } from "@mui/icons-material";
 import { Box, Button, TextField, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {
@@ -5,17 +6,14 @@ import {
     GridPagination,
     GridRowSelectionModel
 } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { PaqueteDto } from "../firebase/firestore/paquetes";
-import { Usuario } from "../firebase/firestore/usuarios";
-import { useUsuariosStore } from "../zustand/useUsuariosStore";
-import DataTable from "./DataTable";
-import FooterTable from "./FooterTable";
-import ModalFormUser from "./ModalFormUser";
-import { PictureAsPdf, TableView } from "@mui/icons-material";
-import { exportExcel, exportExcelUsers, exportPDF, exportPDFUsers } from "../utils/exportTable";
 import dayjs from "dayjs";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
+import { useEffect, useState } from "react";
+import { Usuario } from "../../firebase/firestore/usuarios";
+import { exportExcelUsers, exportPDFUsers } from "../../utils/exportTable";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import { useUsuariosStore } from "../../zustand/useUsuariosStore";
+import ModalFormUser from "../modals/ModalFormUser";
+import DataTable from "./DataTable";
 
 export default function TableUsers() {
     const { agencia } = useAgenciaStore();
@@ -78,15 +76,17 @@ export default function TableUsers() {
         {
             field: "acciones",
             headerName: "Acciones",
-            width: 150,
+            width: 100,
             renderCell: (params) => (
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => handleEdit(params.row)}
-                >
-                    Editar
-                </Button>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                    <Button
+                        variant="outlined"
+                        sx={{ minWidth: "auto", padding: "5px", marginX: "auto" }}
+                        onClick={() => handleEdit(params.row)}
+                    >
+                        <Edit sx={{ fontSize: 20 }} />
+                    </Button>
+                </Box>
             ),
         },
     ];
