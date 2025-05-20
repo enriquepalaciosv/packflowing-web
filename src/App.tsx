@@ -1,3 +1,4 @@
+import "./App.css"
 import { Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -12,6 +13,7 @@ import ProtectedRoute from "./screens/ProtectedRoute";
 import LoginRoute from "./screens/auth/LoginRoute";
 import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
+import PrivacyPolicyScreen from "./screens/PrivacyPolicy";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
 
 function App() {
@@ -40,8 +42,20 @@ function App() {
       <BrowserRouter>
         <ToastContainer />
 
+      <Routes>
+        <Route path="/login" element={<LoginRoute />} />
+        <Route path="/reset-password" element={<ResetPasswordScreen />} />
+
+        {agencia.registrarUsuarios && (
+          <Route path="/register" element={<RegisterRoute />} />
+        )}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<HomeRoute />} />
+          <Route path="/profile" element={<ProfileRoute />} />
+        </Route>
         <Routes>
           <Route path="/login" element={<LoginRoute />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
           <Route path="/reset-password" element={<ResetPasswordScreen />} />
           {agencia.registrarUsuarios && (
             <Route path="/register" element={<RegisterRoute />} />
@@ -50,6 +64,7 @@ function App() {
             <Route path="/" element={<HomeRoute />} />
             <Route path="/settings" element={<ProfileRoute />} />
           </Route>
+
 
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
         </Routes>
