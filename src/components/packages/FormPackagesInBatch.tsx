@@ -1,12 +1,12 @@
 import { GridRowId } from "@mui/x-data-grid";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
 import { useState } from "react";
 import {
   Usuario,
   searchUsersByFullNameOrLocker,
-} from "../firebase/firestore/usuarios";
-import Fee from "../interfaces/Fee";
-import { updatePackagesInBatch } from "../firebase/firestore/paquetes";
+} from "../../firebase/firestore/usuarios";
+import Fee from "../../interfaces/Fee";
+import { updatePackagesInBatch } from "../../firebase/firestore/paquetes";
 import { toast } from "react-toastify";
 import {
   Box,
@@ -19,9 +19,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import STATUS_PACKAGES from "../utils/statusPackages";
-import AutocompleteComponent from "./Autocomplete";
-import { usePaqueteStore } from "../zustand/usePaquetesStore";
+import STATUS_PACKAGES from "../../utils/statusPackages";
+import AutocompleteComponent from "../inputs/Autocomplete";
+import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 
 export default function FormPackagesInBatch({
   onClose,
@@ -165,7 +165,7 @@ export default function FormPackagesInBatch({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Buscar usuario por nombre o locker"
+                label="Buscar usuario por nombre o cliente"
               />
             )}
             sx={{ width: "80%" }}

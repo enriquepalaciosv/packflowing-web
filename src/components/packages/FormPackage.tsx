@@ -8,14 +8,14 @@ import {
   PaqueteDto,
   savePaquete,
   updatePaquete,
-} from "../firebase/firestore/paquetes";
-import { Usuario } from "../firebase/firestore/usuarios";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
+} from "../../firebase/firestore/paquetes";
+import { Usuario } from "../../firebase/firestore/usuarios";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
 import StepPaquetes from "./StepPaquetes";
 import StepResumen from "./StepResumen";
 import StepUsuario from "./StepUsuarios";
 import { toast } from "react-toastify";
-import { usePaqueteStore } from "../zustand/usePaquetesStore";
+import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 
 const steps = ["Datos del usuario", "Datos Paquetes", "Detalles"];
 
@@ -45,7 +45,7 @@ export default function FormPackage({
         tarifa: entity?.tarifa ?? undefined,
         peso: entity?.peso ?? {
           monto: 0,
-          unidad: "kg",
+          unidad: "lb",
         },
         rastreo: entity?.rastreo ?? [],
         estado: entity?.estado ?? "recibido",

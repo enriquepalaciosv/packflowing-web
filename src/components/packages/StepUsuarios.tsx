@@ -1,10 +1,10 @@
 import { Box, Button, TextField } from "@mui/material";
-import AutocompleteComponent from "./Autocomplete";
+import AutocompleteComponent from "../inputs/Autocomplete";
 import React from "react";
 import {
   Usuario,
   searchUsersByFullNameOrLocker,
-} from "../firebase/firestore/usuarios";
+} from "../../firebase/firestore/usuarios";
 
 export default function StepUsuario({
   selectedUser,
@@ -49,7 +49,7 @@ export default function StepUsuario({
         onInputChange={handleInputChange}
         onChange={(_, value) => value && setSelectedUser(value)}
         renderInput={(params) => (
-          <TextField {...params} label="Buscar usuario por nombre o locker" />
+          <TextField {...params} label="Buscar usuario por nombre o cliente" />
         )}
       />
       <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>

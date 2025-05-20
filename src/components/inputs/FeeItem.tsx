@@ -7,7 +7,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import Fee from "../interfaces/Fee";
+import Fee from "../../interfaces/Fee";
 import InputFormik from "./InputFormik";
 
 interface FeeItemProps {

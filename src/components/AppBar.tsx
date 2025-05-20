@@ -26,11 +26,6 @@ const ITEMS = [
     path: "/",
   },
   {
-    title: "Agencia",
-    Icon: <Factory sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
-    path: "/profile",
-  },
-  {
     title: "Paquetes",
     Icon: <Inventory sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
     path: "/",
@@ -41,14 +36,9 @@ const ITEMS = [
     path: "/",
   },
   {
-    title: "Estadisticas",
-    Icon: <Equalizer sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
-    path: "/",
-  },
-  {
     title: "Configuración",
     Icon: <Settings sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
-    path: "/",
+    path: "/settings",
   },
 ];
 

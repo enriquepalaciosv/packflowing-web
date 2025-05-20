@@ -5,7 +5,7 @@ import {
   GridRowsProp,
   GridSlotsComponent,
 } from "@mui/x-data-grid";
-import { PaqueteDto } from "../firebase/firestore/paquetes";
+import { PaqueteDto } from "../../firebase/firestore/paquetes";
 
 interface DataTableProps {
   rows: GridRowsProp<PaqueteDto>;
