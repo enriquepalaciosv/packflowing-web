@@ -1,4 +1,4 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {
     GridColDef,
@@ -12,17 +12,21 @@ import { useUsuariosStore } from "../zustand/useUsuariosStore";
 import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
 import ModalFormUser from "./ModalFormUser";
+import { PictureAsPdf, TableView } from "@mui/icons-material";
+import { exportExcel, exportExcelUsers, exportPDF, exportPDFUsers } from "../utils/exportTable";
+import dayjs from "dayjs";
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 export default function TableUsers() {
+    const { agencia } = useAgenciaStore();
     const [isOpen, setIsOpen] = useState(false);
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 20,
     });
-    const [_, setIsOpenModalInBatch] = useState(false);
     const [search, setSearch] = useState("");
     const [entity, setEntity] = useState<Usuario>();
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
+    const [_, setSelectionModel] = useState<GridRowSelectionModel>();
 
     const { countTotal, allUsuarios, resetUsuarios, fetchNextPage } = useUsuariosStore();
 
@@ -110,15 +114,46 @@ export default function TableUsers() {
                         size="small"
                         sx={{ width: "90%" }}
                     />
-                    {/**
-                        <Button
-                            variant="contained"
-                            onClick={() => handleIsOpenModal()}
-                            size="small"
-                        >
-                            Crear
-                        </Button>
-                    */}
+                    <Button
+                        size="small"
+                        disabled={!filteredRows.slice(
+                            paginationModel.page * paginationModel.pageSize,
+                            (paginationModel.page + 1) * paginationModel.pageSize
+                        ).length}
+                        onClick={() => {
+                            const fecha = dayjs().format("DD/MM/YYYY")
+                            const fileName = `usuarios-${fecha}.pdf`
+                            exportPDFUsers(
+                                fileName,
+                                filteredRows,
+                                agencia?.nombre ?? "",
+                            )
+                        }}
+                    >
+                        <Tooltip title="Exportar como archivo PDF">
+                            <PictureAsPdf />
+                        </Tooltip>
+                    </Button>
+                    <Button
+                        size="small"
+                        disabled={!filteredRows.slice(
+                            paginationModel.page * paginationModel.pageSize,
+                            (paginationModel.page + 1) * paginationModel.pageSize
+                        ).length}
+                        onClick={() => {
+                            const fecha = dayjs().format("DD/MM/YYYY")
+                            const fileName = `usuarios-${fecha}.xlsx`
+                            exportExcelUsers(
+                                fileName,
+                                filteredRows,
+                                agencia?.nombre ?? "",
+                            )
+                        }}
+                    >
+                        <Tooltip title="Exportar como archivo .xlsx">
+                            <TableView />
+                        </Tooltip>
+                    </Button>
                 </Box>
 
                 <DataTable<Usuario>
