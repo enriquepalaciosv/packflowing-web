@@ -2,8 +2,8 @@
 import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import PaqueteItem from "./PackageItem";
-import { Paquete } from "../firebase/firestore/paquetes";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
+import { Paquete } from "../../firebase/firestore/paquetes";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
 
 type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
 
@@ -34,10 +34,10 @@ export default function StepPaquetes({
         idRastreo: "",
         via: "aereo",
         contenido: "",
-        tarifa: agencia?.tarifas[0],
+        tarifa: undefined,
         peso: {
           monto: 0,
-          unidad: "kg",
+          unidad: "lb",
         },
       },
     ]);

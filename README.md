@@ -248,7 +248,7 @@ firebase deploy --only functions
 
 La función **guardarPaquete** permite crear o actualizar un paquete, manejando validaciones del plan de la agencia y el estado del paquete.
 
-Para la creación, se registra un nuevo paquete con el estado inicial **Recibido**, se registra el primer evento en el historial del rastreo, agrega el campo **createdAt** con fecha y hora de Nicaragua (America/Managua) y si el plan de la agencia es **Básico** se descuenta del limite mensual. Y por último, si el usuario asociado al paquete contiene **token FCM** se le envía una notificación.
+Para la creación, se registra un nuevo paquete con el estado inicial **Recibido**, se registra el primer evento en el historial del rastreo, agrega el campo **createdAt** con fecha y hora de Nicaragua (America/Managua) y si el limite de la agencia es distinto a cero, se valida si la cantidad de paquetes creados para el mes actual es menor a el limite de la suscripción de la agencia. Y por último, si el usuario asociado al paquete contiene **token FCM** se le envía una notificación.
 
 En la actualización, se compara el estado actual y el anterior, si son distintos se agrega un nuevo evento al historial de rastreo, se actualiza el campo **updatedAt** y se le envía al usuario una notificación sobre este cambio.
 

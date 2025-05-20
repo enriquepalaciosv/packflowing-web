@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
-import { Paquete } from "../firebase/firestore/paquetes";
-import { Usuario } from "../firebase/firestore/usuarios";
+import { Paquete } from "../../firebase/firestore/paquetes";
+import { Usuario } from "../../firebase/firestore/usuarios";
 
 interface Props {
   selectedUser: Usuario;
@@ -46,7 +46,7 @@ export default function StepResumen({
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography>
-                  <strong>Locker:</strong> {selectedUser.lockerCode}
+                  <strong>Cliente:</strong> {selectedUser.lockerCode}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>

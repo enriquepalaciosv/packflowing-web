@@ -7,23 +7,30 @@ import {
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { PaqueteDto, updatePaquete } from "../firebase/firestore/paquetes";
-import { COLORS_BY_STATUS } from "../utils/colorsStatus";
-import STATUS_PACKAGES from "../utils/statusPackages";
-import { usePaqueteStore } from "../zustand/usePaquetesStore";
+import { PaqueteDto, updatePaquete } from "../../firebase/firestore/paquetes";
+import { COLORS_BY_STATUS } from "../../utils/colorsStatus";
+import STATUS_PACKAGES from "../../utils/statusPackages";
+import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 import DataTable from "./DataTable";
 import FooterTable from "./FooterTable";
-import ModalFormPackage from "./ModalPackage";
-import ModalPackagesInBatch from "./ModalPackagesInBatch";
-import { exportPDF, exportExcel } from "../utils/exportTable";
-import { Help, PictureAsPdf, TableView } from "@mui/icons-material";
-import { useDateRangeStore } from "../zustand/useDateRangeStore";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
+import ModalFormPackage from "../modals/ModalPackage";
+import ModalPackagesInBatch from "../modals/ModalPackagesInBatch";
+import { Delete, Edit, Help, PictureAsPdf, TableView } from "@mui/icons-material";
+import { validateCreditsAgency, validateHasRates } from "../../utils/agencyValidations";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import ModalNoCredit from "../modals/ModalNoCredit";
+import ModalHasNotRates from "../modals/ModalHasNotRates";
+import ModalDeletePackage from "../modals/ModalDeletePackage";
+import { exportPDF, exportExcel } from "../../utils/exportTable";
+import { useDateRangeStore } from "../../zustand/useDateRangeStore";
 
 export default function TablePackages() {
   const { fechaInicio, fechaFin } = useDateRangeStore();
   const { agencia } = useAgenciaStore()
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModalNoCredit, setIsOpenModalNoCredit] = useState(false);
+  const [isOpenModalDeletePackage, setIsOpenModalDeletePackage] = useState(false);
+  const [isOpenModalHasNotRates, setIsOpenModalHasNotRates] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 20,
@@ -31,6 +38,7 @@ export default function TablePackages() {
   const [isOpenModalInBatch, setIsOpenModalInBatch] = useState(false);
   const [search, setSearch] = useState("");
   const [entity, setEntity] = useState<PaqueteDto>();
+  const [packageForDelete, setPackageForDelete] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
   const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts, fetchAllPaquetes } =
     usePaqueteStore();
@@ -56,6 +64,27 @@ export default function TablePackages() {
     handleIsOpenModal(false);
     setEntity(undefined);
   };
+
+  const handleCreate = async () => {
+    // Validate credits
+    if (await validateCreditsAgency(agencia)) {
+      // Validate has rates
+      if (validateHasRates(agencia)) {
+        handleIsOpenModal();
+      } else {
+        // Modal hasn't rates
+        setIsOpenModalHasNotRates(true)
+      }
+    } else {
+      // Modal contact soport
+      setIsOpenModalNoCredit(true)
+    }
+  }
+
+  const handleDeletePackage = (pack: PaqueteDto) => {
+    setPackageForDelete(pack);
+    setIsOpenModalDeletePackage(true)
+  }
 
   const columns: GridColDef[] = [
     { field: "idRastreo", headerName: "ID", width: 160 },
@@ -144,21 +173,48 @@ export default function TablePackages() {
     {
       field: "acciones",
       headerName: "Acciones",
-      width: 150,
+      width: 100,
       renderCell: (params) => (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => handleEdit(params.row)}
-        >
-          Editar
-        </Button>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center", height: "100%" }}>
+          <Button
+            variant="outlined"
+            sx={{ minWidth: "auto", padding: "5px" }}
+            onClick={() => handleEdit(params.row)}
+          >
+            <Edit sx={{ fontSize: 20 }} />
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{ minWidth: "auto", padding: "5px", borderColor: "#ed6c02" }}
+            onClick={() => handleDeletePackage(params.row as PaqueteDto)}
+          >
+            <Delete sx={{ fontSize: 20 }} color="warning" />
+          </Button>
+        </Box>
       ),
     },
   ];
 
   return (
     <>
+      <ModalNoCredit
+        isOpen={isOpenModalNoCredit}
+        onClose={() => setIsOpenModalNoCredit(false)}
+      />
+      <ModalHasNotRates
+        isOpen={isOpenModalHasNotRates}
+        onClose={() => setIsOpenModalHasNotRates(false)}
+      />
+      {packageForDelete &&
+        <ModalDeletePackage
+          isOpen={isOpenModalDeletePackage}
+          onClose={() => {
+            setPackageForDelete(undefined);
+            setIsOpenModalDeletePackage(false);
+          }}
+          paquete={packageForDelete}
+        />
+      }
       <ModalFormPackage
         isOpen={isOpen}
         onClose={handleCloseModal}
@@ -187,7 +243,7 @@ export default function TablePackages() {
           />
           <Button
             variant="contained"
-            onClick={() => handleIsOpenModal()}
+            onClick={() => handleCreate()}
             size="small"
           >
             Crear

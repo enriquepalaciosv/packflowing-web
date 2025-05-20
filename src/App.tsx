@@ -1,3 +1,4 @@
+import "./App.css"
 import { Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -12,20 +13,12 @@ import ProtectedRoute from "./screens/ProtectedRoute";
 import LoginRoute from "./screens/auth/LoginRoute";
 import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
+import PrivacyPolicyScreen from "./screens/PrivacyPolicy";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
-import { seedRandomPackages } from "./hardcode";
 import UsersRoute from "./screens/UsersRoute";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
-
-  useEffect(() => {
-    // seedRandomPackages recibe un número como parametro
-    // El número indica la cantidad de elementos a agregar
-    // Descomentar la línea 26 para insertar los elementos
-    const addRandomPackages = () => seedRandomPackages(100);
-    // addRandomPackages()
-  }, []);
 
   // Guardar agencia en store
   useEffect(() => {
@@ -41,7 +34,7 @@ function App() {
 
   if (!agencia) {
     return (
-      <Typography sx={{ textAlign: "center" }}>Cargando agencia...</Typography>
+      <Typography sx={{ textAlign: "center" }}>Cargando...</Typography>
     );
   }
 
@@ -49,19 +42,18 @@ function App() {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <BrowserRouter>
         <ToastContainer />
-
         <Routes>
-          <Route path="/login" element={<LoginRoute />} />
-          <Route path="/reset-password" element={<ResetPasswordScreen />} />
           {agencia.registrarUsuarios && (
             <Route path="/register" element={<RegisterRoute />} />
           )}
+          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
+          <Route path="/reset-password" element={<ResetPasswordScreen />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomeRoute />} />
             <Route path="/profile" element={<ProfileRoute />} />
             <Route path="/users" element={<UsersRoute />} />
           </Route>
-
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
         </Routes>
       </BrowserRouter>

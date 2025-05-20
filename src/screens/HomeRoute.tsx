@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import AppBar from "../components/AppBar";
 import CardStatistic from "../components/CardStatistic";
 import NavBar from "../components/NavBar";
-import TablePackages from "../components/TablePackages";
+import TablePackages from "../components/tables/TablePackages";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { usePaqueteStore } from "../zustand/usePaquetesStore";
-import DateRangePickerComponent from "../components/DateRangePicker";
+import DateRangePickerComponent from "../components/inputs/DateRangePicker";
 
 export default function HomeRoute() {
   const { agencia } = useAgenciaStore();
