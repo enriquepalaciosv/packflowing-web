@@ -13,18 +13,9 @@ import LoginRoute from "./screens/auth/LoginRoute";
 import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
-import { seedRandomPackages } from "./hardcode";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
-
-  useEffect(() => {
-    // seedRandomPackages recibe un número como parametro
-    // El número indica la cantidad de elementos a agregar
-    // Descomentar la línea 26 para insertar los elementos
-    const addRandomPackages = () => seedRandomPackages(100);
-    // addRandomPackages()
-  }, []);
 
   // Guardar agencia en store
   useEffect(() => {
@@ -40,7 +31,7 @@ function App() {
 
   if (!agencia) {
     return (
-      <Typography sx={{ textAlign: "center" }}>Cargando agencia...</Typography>
+      <Typography sx={{ textAlign: "center" }}>Cargando...</Typography>
     );
   }
 

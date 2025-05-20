@@ -67,7 +67,7 @@ const actualizarAgencia = async (agencia: Partial<Agency>) => {
     if (docSnap.exists()) {
       const data = docSnap.data();
       setDoc(docRef, { ...data, ...agencia });
-      toast.success("Agencia actualizada con éxito");
+      toast.success("Datos actualizados con éxito");
       return { ...data, ...agencia } as Agency;
     } else {
       console.log("No existe el documento 'default' en agencia");

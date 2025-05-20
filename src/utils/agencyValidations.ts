@@ -18,7 +18,7 @@ const validateCreditsAgency = async (agency: Agency | null) => {
 };
 
 const validateHasRates = (agency: Agency | null) => {
-    if (!agency) return false;
+    if (!agency || !agency.tarifas) return false;
     
     return !!agency.tarifas.length
 }
