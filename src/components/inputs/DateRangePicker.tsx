@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useDateRangeStore } from "../zustand/useDateRangeStore";
-import { usePaqueteStore } from "../zustand/usePaquetesStore";
+import { useDateRangeStore } from "../../zustand/useDateRangeStore";
+import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 
-export default function DateRangePickerComponent() {
+export default function DateRangePickerComponent() { 
   const { fechaInicio, fechaFin, setFechas } = useDateRangeStore();
   const { resetPackages, fetchCounts, fetchAllPaquetes } = usePaqueteStore();
 

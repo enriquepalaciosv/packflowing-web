@@ -1,18 +1,19 @@
-import { Dialog, DialogTitle } from "@mui/material";
+import { Dialog, DialogTitle, SxProps } from "@mui/material";
 
 interface ModalProps {
   title: string;
   content: React.JSX.Element;
   open: boolean;
   onClose: () => void;
+  sx?: SxProps
 }
 
-export default function Modal({ title, content, open, onClose }: ModalProps) {
+export default function Modal({ title, content, open, onClose, sx }: ModalProps) {
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      sx={{
+      sx={sx ?? {
         width: {
           xs: "100%",
           sm: "100%",

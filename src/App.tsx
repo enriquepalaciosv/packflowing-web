@@ -15,18 +15,9 @@ import RegisterRoute from "./screens/auth/RegisterRoute";
 import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
 import PrivacyPolicyScreen from "./screens/PrivacyPolicy";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
-import { seedRandomPackages } from "./hardcode";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
-
-  useEffect(() => {
-    // seedRandomPackages recibe un número como parametro
-    // El número indica la cantidad de elementos a agregar
-    // Descomentar la línea 26 para insertar los elementos
-    const addRandomPackages = () => seedRandomPackages(100);
-    // addRandomPackages()
-  }, []);
 
   // Guardar agencia en store
   useEffect(() => {
@@ -42,7 +33,7 @@ function App() {
 
   if (!agencia) {
     return (
-      <Typography sx={{ textAlign: "center" }}>Cargando agencia...</Typography>
+      <Typography sx={{ textAlign: "center" }}>Cargando...</Typography>
     );
   }
 
@@ -54,7 +45,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginRoute />} />
         <Route path="/reset-password" element={<ResetPasswordScreen />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
+
         {agencia.registrarUsuarios && (
           <Route path="/register" element={<RegisterRoute />} />
         )}
@@ -62,6 +53,18 @@ function App() {
           <Route path="/" element={<HomeRoute />} />
           <Route path="/profile" element={<ProfileRoute />} />
         </Route>
+        <Routes>
+          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
+          <Route path="/reset-password" element={<ResetPasswordScreen />} />
+          {agencia.registrarUsuarios && (
+            <Route path="/register" element={<RegisterRoute />} />
+          )}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<HomeRoute />} />
+            <Route path="/settings" element={<ProfileRoute />} />
+          </Route>
+
 
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
         </Routes>

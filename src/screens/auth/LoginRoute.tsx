@@ -1,6 +1,6 @@
 import { Box, Button, Container, FormControl, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import InputFormik from "../../components/InputFormik";
+import InputFormik from "../../components/inputs/InputFormik";
 import useLoginFormik from "../../hooks/useLoginHook";
 import { useAgenciaStore } from "../../zustand/useAgenciaStore";
 

@@ -8,9 +8,9 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { Paquete } from "../firebase/firestore/paquetes";
-import { useAgenciaStore } from "../zustand/useAgenciaStore";
-import STATUS_PACKAGES from "../utils/statusPackages";
+import { Paquete } from "../../firebase/firestore/paquetes";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import STATUS_PACKAGES from "../../utils/statusPackages";
 
 type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
 
@@ -114,8 +114,8 @@ export default function PaqueteItem({
           sx={{ minWidth: 80 }}
         // error={touched?.["peso.unidad"] && !paquete?.peso?.unidad}
         >
-          <MenuItem value="kg">kg</MenuItem>
           <MenuItem value="lb">lb</MenuItem>
+          <MenuItem value="kg">kg</MenuItem>
         </Select>
       </Grid>
       {paquete.id && (

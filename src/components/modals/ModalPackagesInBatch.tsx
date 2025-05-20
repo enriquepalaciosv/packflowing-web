@@ -1,5 +1,5 @@
 import { GridRowId } from "@mui/x-data-grid";
-import FormPackagesInBatch from "./FormPackagesInBatch";
+import FormPackagesInBatch from "../packages/FormPackagesInBatch";
 import Modal from "./Modal";
 
 export default function ModalPackagesInBatch({

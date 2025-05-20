@@ -8,7 +8,7 @@ interface DateRangeStore {
 }
 
 export const useDateRangeStore = create<DateRangeStore>((set) => ({
-  fechaInicio: dayjs(), // Por defecto hoy
+  fechaInicio: dayjs().startOf("month"),
   fechaFin: dayjs(),
   setFechas: (inicio, fin) => set({ fechaInicio: inicio, fechaFin: fin }),
 }));
