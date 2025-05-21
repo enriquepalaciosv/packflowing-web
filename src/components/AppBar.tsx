@@ -1,10 +1,7 @@
 import {
-  Equalizer,
-  Home,
   Inventory,
   Person,
   Settings,
-  Factory,
 } from "@mui/icons-material";
 import {
   Divider,
@@ -21,11 +18,6 @@ const drawerWidth = "17%";
 
 const ITEMS = [
   {
-    title: "Inicio",
-    Icon: <Home sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
-    path: "/",
-  },
-  {
     title: "Paquetes",
     Icon: <Inventory sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
     path: "/",
@@ -33,7 +25,7 @@ const ITEMS = [
   {
     title: "Usuarios",
     Icon: <Person sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
-    path: "/",
+    path: "/users",
   },
   {
     title: "Configuración",

@@ -6,7 +6,7 @@ import { PaqueteDto } from "../firebase/firestore/paquetes";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
-
+import { Usuario } from "../firebase/firestore/usuarios";
 
 function loadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -102,6 +102,65 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
   doc.save(fileName);
 }
 
+export async function exportPDFUsers(fileName: string, rows: Usuario[], name: string) {
+  const doc = new jsPDF({ orientation: "landscape" });
+
+  const logoUrl = "/logo.png";
+  let logoBase64: string | null = null;
+
+  try {
+    logoBase64 = await loadImageAsBase64(logoUrl);
+  } catch (error) {
+    console.warn("No se pudo cargar el logo:", error);
+  }
+
+  // Name's agency
+  doc.setFontSize(18);
+  doc.text(name, 30, 20);
+
+  // Generation date
+  const fechaActual = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
+
+  doc.setFontSize(12);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const fechaTextWidth = doc.getTextWidth(fechaActual);
+
+  doc.text(fechaActual, pageWidth - fechaTextWidth - 30, 20);
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "PNG", 15, 12.5, 10, 10);
+  }
+
+  const tableColumn = [
+    "ID",
+    "Cliente",
+    "Nombre",
+    "Apellido",
+    "Correo",
+    "Télefono"
+  ];
+
+  const tableRows = rows.map((row) => {
+    return [
+      row.id,
+      row.lockerCode,
+      row.name,
+      row.lastName,
+      row.email,
+      `${row.countryCode} ${row.phone}`,
+    ];
+  });
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 30,
+  });
+
+  doc.save(fileName);
+}
+
 export async function exportExcel(
   fileName: string,
   rows: PaqueteDto[],
@@ -127,7 +186,7 @@ export async function exportExcel(
   sheet.getCell("A1").border = {
     bottom: { style: 'thin', color: { argb: 'FFFFFFFF' } },
   }
-  
+
   // Generation date
   const generationDate = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
   // Range of dates
@@ -167,7 +226,7 @@ export async function exportExcel(
   ];
 
   sheet.addRow(1);
-  
+
   const headerRow = sheet.addRow(headers);
 
   // Row column names
@@ -204,6 +263,113 @@ export async function exportExcel(
       row.total,
     ]);
   });
+
+  sheet.columns.forEach((column) => {
+    let maxLength = 12;
+    column.eachCell?.((cell) => {
+      const text = cell.value?.toString() ?? "";
+      maxLength = Math.max(maxLength, text.length);
+    });
+    column.width = maxLength + 2;
+  });
+
+  sheet.getColumn(1).width = 12;
+  sheet.getRow(1).height = 20;
+  sheet.getRow(2).height = 20;
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  saveAs(blob, fileName);
+}
+
+export async function exportExcelUsers(
+  fileName: string,
+  rows: Usuario[],
+  agencyName: string
+) {
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Paquetes");
+
+  // Image base 64
+  const logoUrl = "/logo.png";
+  const base64 = await loadImageAsBase64(logoUrl);
+  const imageId = workbook.addImage({
+    base64,
+    extension: "png",
+  });
+
+  sheet.addImage(imageId, {
+    tl: { col: 0 + 0.25, row: 0 + 0.2 },
+    ext: { width: 45, height: 45 },
+  });
+
+  sheet.getCell("A1").border = {
+    bottom: { style: 'thin', color: { argb: 'FFFFFFFF' } },
+  }
+
+  // Generation date
+  const generationDate = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
+
+  // Merge cells A1:A2 (Logo)
+  sheet.mergeCells("A1:A2");
+  sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+  // Merge cells B1:B2 (Name)
+  sheet.mergeCells("B1:C2");
+  sheet.getCell('B1').alignment = { horizontal: 'center', vertical: 'middle' };
+  // Merge cells F1:G1 (Generation date)
+  sheet.mergeCells("F1:F2");
+  sheet.getCell('F1').alignment = { horizontal: 'right', vertical: 'middle' };
+
+  // Add name's agency
+  sheet.getCell("B1").value = agencyName;
+  sheet.getCell("B1").font = { bold: true, size: 16 };
+  // Add generation date
+  sheet.getCell("F1").value = generationDate;
+  sheet.getCell("F1").font = { bold: true, size: 12 };
+
+  const headers = [
+    "ID",
+    "Cliente",
+    "Nombre",
+    "Apellido",
+    "Correo",
+    "Télefono"
+  ];
+
+  sheet.addRow(1);
+
+  const headerRow = sheet.addRow(headers);
+
+  // Row column names
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.alignment = { vertical: "middle", horizontal: "center" };
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFEFEFEF" },
+    };
+  });
+
+  // Data row
+  rows.forEach((row) =>
+    sheet.addRow([
+      row.id,
+      row.lockerCode,
+      row.name,
+      row.lastName,
+      row.email,
+      `${row.countryCode} ${row.phone}`,
+    ])
+  );
 
   sheet.columns.forEach((column) => {
     let maxLength = 12;
