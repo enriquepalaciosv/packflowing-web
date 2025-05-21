@@ -50,9 +50,9 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicyScreen />} />
           <Route path="/reset-password" element={<ResetPasswordScreen />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<HomeRoute />} />
-            <Route path="/profile" element={<ProfileRoute />} />
+            <Route path="/" element={<HomeRoute />} />            
             <Route path="/users" element={<UsersRoute />} />
+            <Route path="/settings" element={<ProfileRoute />} />
           </Route>
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
         </Routes>
