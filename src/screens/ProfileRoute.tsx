@@ -51,7 +51,7 @@ export default function ProfileRoute() {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Typography variant="h6">Contacto</Typography>
             <InputFormik
-              label="Contacto"
+              label="Celular"
               name="contacto"
               // value={values.contacto}
               defaultValue={initialValues.contacto}
