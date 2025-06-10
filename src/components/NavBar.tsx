@@ -10,19 +10,16 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import PersonIcon from '@mui/icons-material/Person';
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
-
-const pages = ["Paquetes", "Tarifas", "Usuarios"];
+import { useAgenciaStore } from "../zustand/useAgenciaStore";
 
 export default function NavBar() {
-  const navigate = useNavigate();
-
+  const { agencia } = useAgenciaStore();
   const settings = [
     {
       title: "Cerrar sesión",
       onClick: () => {
-        localStorage.removeItem("user");
-        navigate("/login");
+        localStorage.removeItem("auth-storage");
+        window.location.reload();
       },
     },
   ];
@@ -39,6 +36,10 @@ export default function NavBar() {
     setAnchorElUser(null);
   };
 
+  const capitalize = (word: string) => {
+    return word.charAt(0).toUpperCase() + word.slice(1)
+  }
+
   return (
     <AppBar
       position="static"
@@ -46,6 +47,9 @@ export default function NavBar() {
     >
       <Container maxWidth={false}>
         <Toolbar disableGutters sx={{ justifyContent: "flex-end" }}>
+          <Typography style={{ marginRight: 8 }}>
+            {capitalize(`${agencia?.suscripcion?.plan}`)}
+          </Typography>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Cerrar sesión">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

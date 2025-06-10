@@ -13,6 +13,7 @@ interface InputFormikProps {
   type?: string;
   style?: React.CSSProperties;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  handleSubmit?: (e: any) => void;
 }
 
 export default function InputFormik({
@@ -27,7 +28,13 @@ export default function InputFormik({
   type = "text",
   style = {},
   autoCapitalize = "sentences",
+  handleSubmit
 }: InputFormikProps) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && handleSubmit) {
+      handleSubmit(event);
+    }
+  }
   return (
     <Box style={style}>
       <TextField
@@ -46,6 +53,7 @@ export default function InputFormik({
         inputProps={{
           autoCapitalize,
         }}
+        onKeyDown={handleKeyDown}
       />
       {error && (
         <Typography color="error" fontSize={12} marginTop={0.5}>

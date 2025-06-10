@@ -91,6 +91,7 @@ export default function LoginRoute() {
             errorText={errors.password ?? ""}
             handleChange={handleChange("password")}
             handleBlur={handleBlur("password")}
+            handleSubmit={(e: any) => handleSubmit(e)}
             type="password"
           />
 

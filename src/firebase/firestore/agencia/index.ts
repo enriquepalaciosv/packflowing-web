@@ -3,41 +3,6 @@ import { database } from "../..";
 import { Agency } from "../../../interfaces/Agency";
 import { toast } from "react-toastify";
 
-// Harcodear agencia
-const guardarAgenciaDefault = async () => {
-  const agenciaDefault = {
-    nombre: "Envios Express",
-    politicaPrivacidad: "https://algunaurl.com",
-    contacto: "+505 88997766",
-    suscripcion: {
-      plan: "Premium",
-      limite: 0,
-    },
-    AI: true,
-    registrarUsuarios: true,
-    tarifas: [
-      { nombre: "Marítima", monto: 3, moneda: "USD" },
-      { nombre: "Aereo", monto: 7.5, moneda: "USD" },
-      { nombre: "Dia de las madres", monto: 5, moneda: "USD" },
-    ],
-  };
-
-  try {
-    const docRef = doc(database, "agencia", "default");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      await setDoc(docRef, agenciaDefault, { merge: true });
-      console.log("Agencia 'default' actualizada.");
-    } else {
-      await setDoc(docRef, agenciaDefault);
-      console.log("Agencia 'default' creada.");
-    }
-  } catch (error) {
-    console.error("❌ Error al guardar agencia default:", error);
-  }
-};
-
 // Obtener agencia
 const obtenerAgencia = async () => {
   try {
@@ -80,4 +45,4 @@ const actualizarAgencia = async (agencia: Partial<Agency>) => {
   }
 };
 
-export { guardarAgenciaDefault, obtenerAgencia, actualizarAgencia };
+export { obtenerAgencia, actualizarAgencia };
