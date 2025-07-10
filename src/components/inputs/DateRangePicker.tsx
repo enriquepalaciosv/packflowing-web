@@ -1,43 +1,40 @@
 import { Box } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useDateRangeStore } from "../../zustand/useDateRangeStore";
-import { usePaqueteStore } from "../../zustand/usePaquetesStore";
+import dayjs from "dayjs";
 
-export default function DateRangePickerComponent() { 
-  const { fechaInicio, fechaFin, setFechas } = useDateRangeStore();
-  const { resetPackages, fetchCounts, fetchAllPaquetes } = usePaqueteStore();
+interface DateRangePickerProps {
+  start: dayjs.Dayjs,
+  end: dayjs.Dayjs,
+  setDate: (inicio: dayjs.Dayjs, fin: dayjs.Dayjs) => void;
+  handleChange: () => void;
+}
 
-  function fetchData() {
-    resetPackages();
-    fetchCounts();
-    fetchAllPaquetes();
-  }
-
+export default function DateRangePickerComponent({ start, end, setDate, handleChange } : DateRangePickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ display: "flex", gap: 2 }}>
         <DatePicker
           label="Desde"
-          value={fechaInicio}
+          value={start}
           onChange={(newValue) => {
             if (!newValue) return;
-            const nuevoFin = fechaFin.isBefore(newValue) ? newValue : fechaFin;
-            setFechas(newValue, nuevoFin);
-            fetchData();
+            const nuevoFin = end.isBefore(newValue) ? newValue : end;
+            setDate(newValue, nuevoFin);
+            handleChange()
           }}
           slotProps={{ textField: { size: "small" } }}
         />
         <DatePicker
           label="Hasta"
-          value={fechaFin}
+          value={end}
           onChange={(newValue) => {
             if (!newValue) return;
-            const nuevoInicio = fechaInicio.isAfter(newValue)
+            const nuevoInicio = start.isAfter(newValue)
               ? newValue
-              : fechaInicio;
-            setFechas(nuevoInicio, newValue);
-            fetchData();
+              : start;
+            setDate(nuevoInicio, newValue);
+            handleChange()
           }}
           slotProps={{ textField: { size: "small" } }}
         />

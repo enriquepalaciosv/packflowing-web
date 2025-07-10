@@ -7,6 +7,7 @@ import TablePackages from "../components/tables/TablePackages";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { usePaqueteStore } from "../zustand/usePaquetesStore";
 import DateRangePickerComponent from "../components/inputs/DateRangePicker";
+import { useDateRangeStore } from "../zustand/useDateRangeStore";
 
 export default function HomeRoute() {
   const { agencia } = useAgenciaStore();
@@ -17,7 +18,15 @@ export default function HomeRoute() {
     countRecibido,
     fetchCounts,
     fetchAllPaquetes,
+    resetPackages
   } = usePaqueteStore();
+  const { fechaInicio, fechaFin, setFechas } = useDateRangeStore();
+
+  function fetchData() {
+    resetPackages();
+    fetchCounts();
+    fetchAllPaquetes();
+  }
 
   useEffect(() => {
     fetchCounts();
@@ -47,12 +56,10 @@ export default function HomeRoute() {
           }}
         >
           <DateRangePickerComponent
-          // startText="Desde"
-          // endText="Hasta"
-          // value={[from, to]}
-          // onChange={([start, end]) => {
-          //   if (start && end) setRange(start, end);
-          // }}
+            start={fechaInicio}
+            end={fechaFin}
+            setDate={setFechas}
+            handleChange={fetchData}
           />
           <Grid container spacing={2}>
             <CardStatistic

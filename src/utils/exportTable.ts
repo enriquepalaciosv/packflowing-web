@@ -6,7 +6,7 @@ import { PaqueteDto } from "../firebase/firestore/paquetes";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
-import { Usuario } from "../firebase/firestore/usuarios";
+import { Usuario, UsuarioConStats } from "../firebase/firestore/usuarios";
 
 function loadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
   doc.save(fileName);
 }
 
-export async function exportPDFUsers(fileName: string, rows: Usuario[], name: string) {
+export async function exportPDFUsers(fileName: string, rows: UsuarioConStats[], name: string) {
   const doc = new jsPDF({ orientation: "landscape" });
 
   const logoUrl = "/logo.png";
@@ -138,7 +138,10 @@ export async function exportPDFUsers(fileName: string, rows: Usuario[], name: st
     "Nombre",
     "Apellido",
     "Correo",
-    "Télefono"
+    "Télefono",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   const tableRows = rows.map((row) => {
@@ -149,6 +152,9 @@ export async function exportPDFUsers(fileName: string, rows: Usuario[], name: st
       row.lastName,
       row.email,
       `${row.countryCode} ${row.phone}`,
+      row.aereo,
+      row.maritimo,
+      row.total
     ];
   });
 
@@ -223,6 +229,9 @@ export async function exportExcel(
     "Estado",
     "Últ. Rastreo",
     "Total",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   sheet.addRow(1);
@@ -286,7 +295,7 @@ export async function exportExcel(
 
 export async function exportExcelUsers(
   fileName: string,
-  rows: Usuario[],
+  rows: UsuarioConStats[],
   agencyName: string
 ) {
   const workbook = new ExcelJS.Workbook();
@@ -335,7 +344,10 @@ export async function exportExcelUsers(
     "Nombre",
     "Apellido",
     "Correo",
-    "Télefono"
+    "Télefono",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   sheet.addRow(1);
@@ -368,6 +380,9 @@ export async function exportExcelUsers(
       row.lastName,
       row.email,
       `${row.countryCode} ${row.phone}`,
+      row.aereo,
+      row.maritimo,
+      row.total
     ])
   );
 
