@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import AppBar from "../components/AppBar";
-import CardStatistic from "../components/CardStatistic";
+import CardStatistic from "../components/cards/CardStatistic";
 import NavBar from "../components/NavBar";
 import TablePackages from "../components/tables/TablePackages";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";

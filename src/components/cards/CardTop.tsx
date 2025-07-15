@@ -1,6 +1,6 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
-import MedalIcon from "../constants/icons/medal";
-import { PODIUM_COLORS } from "../utils/colorsStatus";
+import MedalIcon from "../../constants/icons/medal";
+import { PODIUM_COLORS } from "../../utils/colorsStatus";
 
 interface CardTopUsersProp {
     title: string;

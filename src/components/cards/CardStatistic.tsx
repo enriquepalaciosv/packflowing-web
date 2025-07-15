@@ -1,10 +1,10 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
-import COLORS from "../utils/colorsStatus";
-import { StatusText } from "../utils/statusText";
+import COLORS from "../../utils/colorsStatus";
+import { StatusText } from "../../utils/statusText";
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import PackageOpenIcon from "../constants/icons/package-open";
-import CheckIcon from "../constants/icons/check";
-import PackageClose from "../constants/icons/package-close";
+import PackageOpenIcon from "../../constants/icons/package-open";
+import CheckIcon from "../../constants/icons/check";
+import PackageClose from "../../constants/icons/package-close";
 
 interface CardStatisticProp {
   title: StatusText;

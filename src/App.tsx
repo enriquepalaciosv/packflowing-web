@@ -16,6 +16,7 @@ import ResetPasswordScreen from "./screens/auth/ResetPasswordRoute";
 import PrivacyPolicyScreen from "./screens/PrivacyPolicy";
 import { useAgenciaStore } from "./zustand/useAgenciaStore";
 import UsersRoute from "./screens/UsersRoute";
+import AnalyticsRoute from "./screens/AnalyticsRoute";
 
 function App() {
   const { setAgencia, agencia } = useAgenciaStore();
@@ -52,6 +53,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomeRoute />} />            
             <Route path="/users" element={<UsersRoute />} />
+            <Route path="/analytics" element={<AnalyticsRoute />} />
             <Route path="/settings" element={<ProfileRoute />} />
           </Route>
           <Route path="*" element={<h1>404 - Página no encontrada</h1>} />

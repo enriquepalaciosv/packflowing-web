@@ -17,3 +17,9 @@ export const packageMapping: Record<string, PackageTitle> = {
   listo_para_retirar: "Paquete listo",
   entregado: "Paquete entregado",
 };
+
+export type AnalyticText =
+  | "Total paquetes"
+  | "Total ventas"
+  | "Paquetes marítimos"
+  | "Paquetes aéreos";

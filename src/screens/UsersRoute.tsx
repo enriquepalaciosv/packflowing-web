@@ -1,14 +1,14 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import AppBar from "../components/AppBar";
-import CardStatistic from "../components/CardStatistic";
+import CardStatistic from "../components/cards/CardStatistic";
 import NavBar from "../components/NavBar";
 import TableUsers from "../components/tables/TableUsers";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { useUsuariosStore } from "../zustand/useUsuariosStore";
 import DateRangePickerComponent from "../components/inputs/DateRangePicker";
 import { useDateRangeStore } from "../zustand/useDateRangeStore";
-import CardTopUsers from "../components/CardTop";
+import CardTopUsers from "../components/cards/CardTop";
 
 export default function UsersRoute() {
   const { agencia } = useAgenciaStore();
