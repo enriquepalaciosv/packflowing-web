@@ -8,6 +8,7 @@ import { PictureAsPdf, TableView } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import getPackagesByRange, { Analytics, getVentasByFecha } from "../firebase/firestore/paquetes";
 import CardAnalytic from "../components/cards/CardAnalytic";
+import VentasChart from "../components/LineChart";
 
 export default function AnalyticsRoute() {
     const { agencia } = useAgenciaStore();
@@ -117,8 +118,8 @@ export default function AnalyticsRoute() {
                             </Button>
                         </Box>
                     </Box>
-                    <Box sx={{}}>
-                        <LineChart data={data} />
+                    <Box sx={{ width: "100%" }}>
+                        <VentasChart data={data} />
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
                         <Grid container spacing={2} justifyContent={"space-around"}>
