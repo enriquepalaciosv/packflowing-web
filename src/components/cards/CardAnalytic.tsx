@@ -1,12 +1,10 @@
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import FlightIcon from '@mui/icons-material/Flight';
-import CheckIcon from "../../constants/icons/check";
-import PackageClose from "../../constants/icons/package-close";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 import PackageOpenIcon from "../../constants/icons/package-open";
+import ShipIcon from '../../constants/icons/ship';
 import { COLORS_ANALYTICS } from "../../utils/colorsStatus";
 import { AnalyticText } from "../../utils/statusText";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 interface CardAnalyticProp {
     title: AnalyticText;
@@ -46,19 +44,19 @@ const Icon = ({ title }: { title: AnalyticText }) => {
         case "Total paquetes":
             return (
                 <div style={{ position: "absolute", right: 30, bottom: 0, top: 0, opacity: 0.25 }}>
-                    <PackageOpenIcon />
+                    <PackageOpenIcon width={130} height={130} />
                 </div>
             )
         case "Total ventas":
             return (
-                <div style={{ position: "absolute", right: 20, bottom: 0, top: 0, opacity: 0.25 }}>
-                    <AttachMoneyIcon sx={{ fontSize: 180 }} />
+                <div style={{ position: "absolute", right: 15, bottom: 0, top: 0, opacity: 0.25 }}>
+                    <AttachMoneyIcon sx={{ fontSize: 130 }} />
                 </div>
             )
         case "Paquetes marítimos":
             return (
                 <div style={{ position: "absolute", right: -25, bottom: -30, opacity: 0.25 }}>
-                    <PackageClose />
+                    <ShipIcon />
                 </div>
             )
         case "Paquetes aéreos":

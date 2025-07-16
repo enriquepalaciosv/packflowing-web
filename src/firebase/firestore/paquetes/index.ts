@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import {
   QueryDocumentSnapshot,
   QueryFieldFilterConstraint,
@@ -20,7 +22,8 @@ import { httpsCallable } from "firebase/functions";
 import { database, functions } from "../..";
 import Fee from "../../../interfaces/Fee";
 import { Usuario } from "../usuarios";
-import dayjs from "dayjs";
+
+dayjs.extend(isSameOrBefore);
 
 const ESTADOS = [
   "entregado",
@@ -323,11 +326,10 @@ export async function getVentasByFecha(
   let hasMore = true;
 
   while (hasMore) {
-    const { paquetes, lastDoc: newLastDoc } = await fetchPaquetesLoteado(
-      lastDoc,
-      fechaInicio,
-      fechaFin
-    );
+    const result: { paquetes: PaqueteDto[]; lastDoc?: QueryDocumentSnapshot } =
+      await fetchPaquetesLoteado(lastDoc, fechaInicio, fechaFin);
+
+    const { paquetes, lastDoc: newLastDoc } = result;
 
     allPaquetes = [...allPaquetes, ...paquetes];
     lastDoc = newLastDoc;
@@ -342,13 +344,23 @@ export async function getVentasByFecha(
   for (const p of allPaquetes) {
     const dateKey = dayjs(p.createdAt.toDate()).format(format);
     const monto = (p.tarifa?.monto || 0) * (p.peso?.monto || 0);
-
     agrupado[dateKey] = (agrupado[dateKey] || 0) + monto;
   }
 
-  return Object.entries(agrupado)
-    .sort(([a], [b]) =>
-      dayjs(a, format).isBefore(dayjs(b, format)) ? -1 : 1
-    )
-    .map(([fecha, total]) => ({ fecha, total }));
+  // Inicializar todas las fechas del rango en 0
+  const fechas: string[] = [];
+  let current = dayjs(fechaInicio);
+  const end = dayjs(fechaFin);
+
+  while (current.isSameOrBefore(end, 'day')) {
+    const key = current.format(format);
+    if (!fechas.includes(key)) fechas.push(key);
+
+    current = format === "YYYY-MM" ? current.add(1, "month") : current.add(1, "day");
+  }
+
+  return fechas.map((fecha) => ({
+    fecha,
+    total: agrupado[fecha] || 0,
+  }));
 }

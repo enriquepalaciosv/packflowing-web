@@ -16,7 +16,6 @@ export default function FormUser({
     const bp = useBreakpoint();
     const {
         values,
-        loading,
         errors,
         touched,
         handleChange,

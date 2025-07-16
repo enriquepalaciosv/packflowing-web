@@ -1,4 +1,4 @@
-import { Box, Button, Container, FormControl, Typography } from "@mui/material";
+import { Button, Container, FormControl, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import InputFormik from "../../components/inputs/InputFormik";
 import useResetPasswordFormik from "../../hooks/useResetPasswordHook";

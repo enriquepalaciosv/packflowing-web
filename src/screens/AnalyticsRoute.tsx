@@ -1,14 +1,16 @@
+import { PictureAsPdf, TableView } from "@mui/icons-material";
 import { Box, Button, Container, Grid, Tooltip, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import AppBar from "../components/AppBar";
+import CardAnalytic from "../components/cards/CardAnalytic";
 import DateRangePickerComponent from "../components/inputs/DateRangePicker";
+import VentasChart from "../components/LineChart";
 import NavBar from "../components/NavBar";
+import getPackagesByRange, { Analytics, getVentasByFecha } from "../firebase/firestore/paquetes";
+import { exportExcelStatistics, exportPDFStatistics } from "../utils/exportTable";
 import { useAgenciaStore } from "../zustand/useAgenciaStore";
 import { useDateRangeStore } from "../zustand/useDateRangeStore";
-import { PictureAsPdf, TableView } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import getPackagesByRange, { Analytics, getVentasByFecha } from "../firebase/firestore/paquetes";
-import CardAnalytic from "../components/cards/CardAnalytic";
-import VentasChart from "../components/LineChart";
 
 export default function AnalyticsRoute() {
     const { agencia } = useAgenciaStore();
@@ -78,18 +80,16 @@ export default function AnalyticsRoute() {
                         >
                             <Button
                                 size="small"
-                                // disabled={!filteredRows.slice(
-                                //     paginationModel.page * paginationModel.pageSize,
-                                //     (paginationModel.page + 1) * paginationModel.pageSize
-                                // ).length}
+                                disabled={!analytics}
                                 onClick={() => {
-                                    // const fecha = dayjs().format("DD/MM/YYYY")
-                                    // const fileName = `usuarios-${fecha}.pdf`
-                                    // exportPDFUsers(
-                                    //     fileName,
-                                    //     filteredRows,
-                                    //     agencia?.nombre ?? "",
-                                    // )
+                                    const fecha = dayjs().format("DD/MM/YYYY")
+                                    const fileName = `estadisticas-${fecha}.pdf`
+                                    exportPDFStatistics(
+                                        fileName,
+                                        "ventas-chart",
+                                        agencia?.nombre ?? "",
+                                        analytics
+                                    )
                                 }}
                             >
                                 <Tooltip title="Exportar como archivo PDF">
@@ -98,18 +98,15 @@ export default function AnalyticsRoute() {
                             </Button>
                             <Button
                                 size="small"
-                                // disabled={!filteredRows.slice(
-                                //     paginationModel.page * paginationModel.pageSize,
-                                //     (paginationModel.page + 1) * paginationModel.pageSize
-                                // ).length}
+                                disabled={!analytics}
                                 onClick={() => {
-                                    // const fecha = dayjs().format("DD/MM/YYYY")
-                                    // const fileName = `usuarios-${fecha}.pdf`
-                                    // exportPDFUsers(
-                                    //     fileName,
-                                    //     filteredRows,
-                                    //     agencia?.nombre ?? "",
-                                    // )
+                                    const fecha = dayjs().format("DD/MM/YYYY")
+                                    const fileName = `estadisticas-${fecha}.xlsx`
+                                    exportExcelStatistics(
+                                        fileName,
+                                        agencia?.nombre ?? "",
+                                        analytics
+                                    )
                                 }}
                             >
                                 <Tooltip title="Exportar como archivo .xlsx">
