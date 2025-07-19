@@ -55,7 +55,7 @@ export default function TablePackages() {
     row.idRastreo.includes(search.toUpperCase())
   );
 
-  const handleEdit = (paquete: PaqueteDto) => {
+  const handleEdit = (paquete?: PaqueteDto) => {
     setEntity(paquete);
     setIsOpen(!isOpen);
   };
@@ -81,7 +81,7 @@ export default function TablePackages() {
     }
   }
 
-  const handleDeletePackage = (pack: PaqueteDto) => {
+  const handleDeletePackages = (pack?: PaqueteDto) => {
     setPackageForDelete(pack);
     setIsOpenModalDeletePackage(true)
   }
@@ -186,7 +186,7 @@ export default function TablePackages() {
           <Button
             variant="outlined"
             sx={{ minWidth: "auto", padding: "5px", borderColor: "#ed6c02" }}
-            onClick={() => handleDeletePackage(params.row as PaqueteDto)}
+            onClick={() => handleDeletePackages(params.row as PaqueteDto)}
           >
             <Delete sx={{ fontSize: 20 }} color="warning" />
           </Button>
@@ -205,7 +205,7 @@ export default function TablePackages() {
         isOpen={isOpenModalHasNotRates}
         onClose={() => setIsOpenModalHasNotRates(false)}
       />
-      {packageForDelete &&
+      {isOpenModalDeletePackage && (
         <ModalDeletePackage
           isOpen={isOpenModalDeletePackage}
           onClose={() => {
@@ -213,8 +213,9 @@ export default function TablePackages() {
             setIsOpenModalDeletePackage(false);
           }}
           paquete={packageForDelete}
+          ids={selectionModel ? Array.from(selectionModel?.ids!).map(id => String(id)) : []}
         />
-      }
+      )}
       <ModalFormPackage
         isOpen={isOpen}
         onClose={handleCloseModal}
@@ -328,12 +329,7 @@ export default function TablePackages() {
               <FooterTable
                 selectedCount={selectionModel?.ids.size || 0}
                 onBatchEdit={() => setIsOpenModalInBatch(true)}
-              //   {
-              //   const selectedPaquetes = allPaquetes.filter((p) =>
-              //     selectionModel?.ids.has(p.id)
-              //   );
-              //   console.log("Editar en lote:", selectedPaquetes);
-              // }}
+                onBatchDelete={() => setIsOpenModalDeletePackage(true)}
               />
             ),
           }}

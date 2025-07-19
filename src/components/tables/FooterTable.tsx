@@ -4,11 +4,13 @@ import { GridFooterContainer, GridPagination } from "@mui/x-data-grid";
 interface TableFooterProps {
   selectedCount: number;
   onBatchEdit: () => void;
+  onBatchDelete: () => void;
 }
 
 export default function FooterTable({
   selectedCount,
   onBatchEdit,
+  onBatchDelete,
 }: TableFooterProps) {
   return (
     <GridFooterContainer>
@@ -28,7 +30,10 @@ export default function FooterTable({
           <Typography>{selectedCount} elemento(s) seleccionado(s)</Typography>
           <Stack direction="row" spacing={2}>
             <Button variant="outlined" size="small" onClick={onBatchEdit}>
-              Editar en lote
+              Editar seleccionados
+            </Button>
+            <Button variant="outlined" color="error" size="small" onClick={onBatchDelete}>
+              Eliminar seleccionados
             </Button>
           </Stack>
         </Box>
