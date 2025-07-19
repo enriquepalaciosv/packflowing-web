@@ -73,6 +73,9 @@ export default function TableUsers() {
                 return countryCode + " " + phone
             }
         },
+        { field: "aereo", headerName: "# Aereos", width: 120 },
+        { field: "maritimo", headerName: "# Maritimos", width: 120 },
+        { field: "total", headerName: "$ Ventas", width: 120 },
         {
             field: "acciones",
             headerName: "Acciones",

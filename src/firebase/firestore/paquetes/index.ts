@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import {
   QueryDocumentSnapshot,
   QueryFieldFilterConstraint,
@@ -20,6 +22,8 @@ import { httpsCallable } from "firebase/functions";
 import { database, functions } from "../..";
 import Fee from "../../../interfaces/Fee";
 import { Usuario } from "../usuarios";
+
+dayjs.extend(isSameOrBefore);
 
 const ESTADOS = [
   "entregado",
@@ -51,6 +55,13 @@ export interface Paquete {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   observaciones?: string
+}
+
+export interface Analytics {
+  packages: number;
+  sales: number;
+  aereo: number;
+  maritimo: number
 }
 
 export interface PaqueteDto extends Paquete {
@@ -261,14 +272,12 @@ export const deletePackage = async (id: string) => {
 };
 
 export async function contarPaquetesDelMes() {
-
   const ahora = Timestamp.now();
-
   const ahoraDate = ahora.toDate();
   const inicioMes = new Date(ahoraDate.getFullYear(), ahoraDate.getMonth(), 1, 0, 0, 0);
   const timestampInicioMes = Timestamp.fromDate(inicioMes);
-
   const paquetesRef = collection(database, "paquetes");
+
   const q = query(
     paquetesRef,
     where("createdAt", ">=", timestampInicioMes),
@@ -278,4 +287,80 @@ export async function contarPaquetesDelMes() {
   const snapshot = await getCountFromServer(q);
 
   return snapshot.data().count;
+}
+
+export default async function getPackagesByRange(startDate: Date, endDate: Date) {
+  const paquetesRef = collection(database, "paquetes");
+
+  const q = query(
+    paquetesRef,
+    where("createdAt", ">=", startDate),
+    where("createdAt", "<=", endDate)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const conteo: Analytics = { packages: 0, sales: 0, aereo: 0, maritimo: 0 };
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const { via, peso, tarifa } = data;
+
+    conteo.packages += 1;
+
+    if (tarifa && peso) conteo.sales += tarifa?.monto * peso?.monto;
+
+    if (via === "aereo") conteo.aereo += 1;
+    else if (via === "maritimo") conteo.maritimo += 1;
+  });
+
+  return conteo
+}
+
+export async function getVentasByFecha(
+  fechaInicio: Date,
+  fechaFin: Date
+): Promise<{ fecha: string; total: number }[]> {
+  let allPaquetes: PaqueteDto[] = [];
+  let lastDoc = undefined;
+  let hasMore = true;
+
+  while (hasMore) {
+    const result: { paquetes: PaqueteDto[]; lastDoc?: QueryDocumentSnapshot } =
+      await fetchPaquetesLoteado(lastDoc, fechaInicio, fechaFin);
+
+    const { paquetes, lastDoc: newLastDoc } = result;
+
+    allPaquetes = [...allPaquetes, ...paquetes];
+    lastDoc = newLastDoc;
+    hasMore = !!newLastDoc;
+  }
+
+  const diffDays = dayjs(fechaFin).diff(dayjs(fechaInicio), "day");
+  const format = diffDays > 31 ? "YYYY-MM" : "DD/MM";
+
+  const agrupado: Record<string, number> = {};
+
+  for (const p of allPaquetes) {
+    const dateKey = dayjs(p.createdAt.toDate()).format(format);
+    const monto = (p.tarifa?.monto || 0) * (p.peso?.monto || 0);
+    agrupado[dateKey] = (agrupado[dateKey] || 0) + monto;
+  }
+
+  // Inicializar todas las fechas del rango en 0
+  const fechas: string[] = [];
+  let current = dayjs(fechaInicio);
+  const end = dayjs(fechaFin);
+
+  while (current.isSameOrBefore(end, 'day')) {
+    const key = current.format(format);
+    if (!fechas.includes(key)) fechas.push(key);
+
+    current = format === "YYYY-MM" ? current.add(1, "month") : current.add(1, "day");
+  }
+
+  return fechas.map((fecha) => ({
+    fecha,
+    total: agrupado[fecha] || 0,
+  }));
 }

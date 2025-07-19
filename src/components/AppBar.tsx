@@ -2,6 +2,7 @@ import {
   Inventory,
   Person,
   Settings,
+  Analytics
 } from "@mui/icons-material";
 import {
   Divider,
@@ -26,6 +27,11 @@ const ITEMS = [
     title: "Usuarios",
     Icon: <Person sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
     path: "/users",
+  },
+  {
+    title: "Estadisticas",
+    Icon: <Analytics sx={{ color: "#FFFFFF", fontSize: "1.25rem" }} />,
+    path: "/analytics",
   },
   {
     title: "Configuración",

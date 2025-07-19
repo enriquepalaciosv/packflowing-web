@@ -1,12 +1,12 @@
-// utils/pdfExport.ts
+import dayjs from "dayjs";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 import { Timestamp } from "firebase/firestore";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { PaqueteDto } from "../firebase/firestore/paquetes";
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
-import dayjs from "dayjs";
-import { Usuario } from "../firebase/firestore/usuarios";
+import { Analytics, PaqueteDto } from "../firebase/firestore/paquetes";
+import { UsuarioConStats } from "../firebase/firestore/usuarios";
+import html2canvas from "html2canvas";
 
 function loadImageAsBase64(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ export async function exportPDF(fileName: string, rows: PaqueteDto[], name: stri
   doc.save(fileName);
 }
 
-export async function exportPDFUsers(fileName: string, rows: Usuario[], name: string) {
+export async function exportPDFUsers(fileName: string, rows: UsuarioConStats[], name: string) {
   const doc = new jsPDF({ orientation: "landscape" });
 
   const logoUrl = "/logo.png";
@@ -138,7 +138,10 @@ export async function exportPDFUsers(fileName: string, rows: Usuario[], name: st
     "Nombre",
     "Apellido",
     "Correo",
-    "Télefono"
+    "Télefono",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   const tableRows = rows.map((row) => {
@@ -149,6 +152,9 @@ export async function exportPDFUsers(fileName: string, rows: Usuario[], name: st
       row.lastName,
       row.email,
       `${row.countryCode} ${row.phone}`,
+      row.aereo,
+      row.maritimo,
+      row.total
     ];
   });
 
@@ -223,6 +229,9 @@ export async function exportExcel(
     "Estado",
     "Últ. Rastreo",
     "Total",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   sheet.addRow(1);
@@ -286,7 +295,7 @@ export async function exportExcel(
 
 export async function exportExcelUsers(
   fileName: string,
-  rows: Usuario[],
+  rows: UsuarioConStats[],
   agencyName: string
 ) {
   const workbook = new ExcelJS.Workbook();
@@ -335,7 +344,10 @@ export async function exportExcelUsers(
     "Nombre",
     "Apellido",
     "Correo",
-    "Télefono"
+    "Télefono",
+    "# Aereos",
+    "# Maritimo",
+    "$ Ventas"
   ];
 
   sheet.addRow(1);
@@ -368,8 +380,196 @@ export async function exportExcelUsers(
       row.lastName,
       row.email,
       `${row.countryCode} ${row.phone}`,
+      row.aereo,
+      row.maritimo,
+      row.total
     ])
   );
+
+  sheet.columns.forEach((column) => {
+    let maxLength = 12;
+    column.eachCell?.((cell) => {
+      const text = cell.value?.toString() ?? "";
+      maxLength = Math.max(maxLength, text.length);
+    });
+    column.width = maxLength + 2;
+  });
+
+  sheet.getColumn(1).width = 12;
+  sheet.getRow(1).height = 20;
+  sheet.getRow(2).height = 20;
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  saveAs(blob, fileName);
+}
+
+export async function exportPDFStatistics(
+  fileName: string,
+  chartElementId: string,
+  agencyName: string,
+  analytics: Analytics | undefined
+) {
+  if (!analytics) return
+
+  const doc = new jsPDF({ orientation: "landscape" });
+
+  // Logo
+  const logoUrl = "/logo.png";
+  let logoBase64: string | null = null;
+
+  try {
+    logoBase64 = await loadImageAsBase64(logoUrl);
+  } catch (error) {
+    console.warn("No se pudo cargar el logo:", error);
+  }
+
+  doc.setFontSize(18);
+  doc.text(agencyName, 30, 20);
+
+  const fechaActual = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const fechaTextWidth = doc.getTextWidth(fechaActual);
+  doc.setFontSize(12);
+  doc.text(fechaActual, pageWidth - fechaTextWidth, 20);
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "PNG", 15, 12.5, 10, 10);
+  }
+
+  const chartElement = document.getElementById(chartElementId);
+  if (!chartElement) {
+    console.error(`Elemento con ID "${chartElementId}" no encontrado.`);
+    return;
+  }
+
+  const canvas = await html2canvas(chartElement, { backgroundColor: "#fff" });
+  const chartImg = canvas.toDataURL("image/png");
+
+  const imageWidth = 300;
+  const imageHeight = 75;
+  const imageX = (pageWidth - imageWidth) / 2;
+  const imageY = 40;
+
+  doc.addImage(chartImg, "PNG", imageX, imageY, imageWidth, imageHeight);
+
+  const tableColumn = [
+    "Total paquetes",
+    "Total ventas",
+    "Paquetes aéreos",
+    "Paquetes marítimos"
+  ];
+
+  const tableRows = [
+    [analytics.packages,
+    "$" + analytics.sales,
+    analytics.aereo,
+    analytics.maritimo]
+  ];
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 120,
+  });
+
+  doc.save(fileName);
+}
+
+export async function exportExcelStatistics(
+  fileName: string,
+  agencyName: string,
+  analytics: Analytics | undefined
+) {
+  if (!analytics) return;
+
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Paquetes");
+
+  const logoUrl = "/logo.png";
+  const base64Logo = await loadImageAsBase64(logoUrl);
+  const logoId = workbook.addImage({ base64: base64Logo, extension: "png" });
+
+  sheet.addImage(logoId, {
+    tl: { col: 0.25, row: 0.2 },
+    ext: { width: 45, height: 45 },
+  });
+
+  const chartElement = document.getElementById("ventas-chart");
+  if (chartElement) {
+    const canvas = await html2canvas(chartElement, { backgroundColor: "#fff" });
+    const chartBase64 = canvas.toDataURL("image/png");
+    const chartImageId = workbook.addImage({
+      base64: chartBase64,
+      extension: "png",
+    });
+
+    sheet.addImage(chartImageId, {
+      tl: { col: 0, row: 3 },
+      ext: { width: 777, height: 160 },
+    });
+  } else {
+    console.warn("No se encontró el elemento #ventas-chart en el DOM.");
+  }
+
+  const generationDate = "Fecha de generación " + dayjs().format("DD/MM/YYYY");
+  sheet.mergeCells("A1:A2");
+  sheet.mergeCells("B1:C2");
+  sheet.mergeCells("F1:F2");
+
+  sheet.getCell("A1").border = {
+    bottom: { style: "thin", color: { argb: "FFFFFFFF" } },
+  };
+  sheet.getCell("A1").alignment = { horizontal: "center", vertical: "middle" };
+  sheet.getCell("B1").alignment = { horizontal: "center", vertical: "middle" };
+  sheet.getCell("F1").alignment = { horizontal: "right", vertical: "middle" };
+
+  sheet.getCell("B1").value = agencyName;
+  sheet.getCell("B1").font = { bold: true, size: 16 };
+
+  sheet.getCell("F1").value = generationDate;
+  sheet.getCell("F1").font = { bold: true, size: 12 };
+
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+  sheet.addRow(1);
+
+  const headerRow = sheet.addRow([
+    "Total paquetes",
+    "Total ventas",
+    "Paquetes aéreos",
+    "Paquetes marítimos",
+  ]);
+
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.alignment = { vertical: "middle", horizontal: "center" };
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFEFEFEF" },
+    };
+  });
+
+  sheet.addRow([
+    analytics.packages,
+    "$" + analytics.sales,
+    analytics.aereo,
+    analytics.maritimo,
+  ]);
 
   sheet.columns.forEach((column) => {
     let maxLength = 12;

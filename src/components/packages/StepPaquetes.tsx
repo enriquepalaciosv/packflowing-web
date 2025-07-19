@@ -1,9 +1,8 @@
 // components/FormPackage/StepPaquetes.tsx
-import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import PaqueteItem from "./PackageItem";
+import React from "react";
 import { Paquete } from "../../firebase/firestore/paquetes";
-import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import PaqueteItem from "./PackageItem";
 
 type FieldPath = keyof Paquete | "peso.monto" | "peso.unidad";
 
@@ -22,7 +21,6 @@ export default function StepPaquetes({
   handleBack,
   activeStep,
 }: Props) {
-  const { agencia } = useAgenciaStore();
   const [touched, setTouched] = React.useState<{
     [index: number]: Partial<Record<FieldPath, boolean>>;
   }>({});

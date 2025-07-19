@@ -1,8 +1,6 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { registerUserService } from "../services/auth/register";
 import { updateUsuario, Usuario } from "../firebase/firestore/usuarios";
 import { useUsuariosStore } from "../zustand/useUsuariosStore";
 

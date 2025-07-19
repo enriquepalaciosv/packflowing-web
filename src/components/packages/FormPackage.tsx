@@ -3,6 +3,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import * as React from "react";
+import { toast } from "react-toastify";
 import {
   Paquete,
   PaqueteDto,
@@ -10,12 +11,10 @@ import {
   updatePaquete,
 } from "../../firebase/firestore/paquetes";
 import { Usuario } from "../../firebase/firestore/usuarios";
-import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 import StepPaquetes from "./StepPaquetes";
 import StepResumen from "./StepResumen";
 import StepUsuario from "./StepUsuarios";
-import { toast } from "react-toastify";
-import { usePaqueteStore } from "../../zustand/usePaquetesStore";
 
 const steps = ["Datos del usuario", "Datos Paquetes", "Detalles"];
 
@@ -31,7 +30,6 @@ export default function FormPackage({
   entity?: PaqueteDto;
   onClose: () => void;
 }) {
-  const { agencia } = useAgenciaStore();
   const [isLoading, setIsLoading] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState<FormData>({
@@ -104,16 +102,13 @@ export default function FormPackage({
 
       if (resultados.fallidos === 0) {
         toast.success(
-          `${resultados.exitosos} paquete${
-            resultados.exitosos > 1 ? "s" : ""
+          `${resultados.exitosos} paquete${resultados.exitosos > 1 ? "s" : ""
           } guardado${resultados.exitosos > 1 ? "s" : ""} con éxito`
         );
       } else {
         toast.error(
-          `${resultados.fallidos} error${
-            resultados.fallidos > 1 ? "es" : ""
-          }, ${resultados.exitosos} guardado${
-            resultados.exitosos > 1 ? "s" : ""
+          `${resultados.fallidos} error${resultados.fallidos > 1 ? "es" : ""
+          }, ${resultados.exitosos} guardado${resultados.exitosos > 1 ? "s" : ""
           } con éxito`
         );
       }

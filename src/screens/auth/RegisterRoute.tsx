@@ -1,15 +1,14 @@
 import {
-  Box,
   Button,
   Container,
   FormControl,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
-import useRegisterFormik from "../../hooks/useRegisterHook";
 import { useNavigate } from "react-router-dom";
 import InputFormik from "../../components/inputs/InputFormik";
 import SelectCountryCodes from "../../components/inputs/SelectCountryCodes";
+import useRegisterFormik from "../../hooks/useRegisterHook";
 import useBreakpoint from "../../utils/useBreakpoint";
 
 export default function RegisterScreen() {

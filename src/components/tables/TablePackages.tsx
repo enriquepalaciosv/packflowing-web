@@ -1,3 +1,4 @@
+import { Delete, Edit, Help, PictureAsPdf, TableView } from "@mui/icons-material";
 import { Box, Button, Chip, MenuItem, Select, TextField, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {
@@ -8,21 +9,20 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PaqueteDto, updatePaquete } from "../../firebase/firestore/paquetes";
+import { validateCreditsAgency, validateHasRates } from "../../utils/agencyValidations";
 import { COLORS_BY_STATUS } from "../../utils/colorsStatus";
+import { exportExcel, exportPDF } from "../../utils/exportTable";
 import STATUS_PACKAGES from "../../utils/statusPackages";
+import { useAgenciaStore } from "../../zustand/useAgenciaStore";
+import { useDateRangeStore } from "../../zustand/useDateRangeStore";
 import { usePaqueteStore } from "../../zustand/usePaquetesStore";
-import DataTable from "./DataTable";
-import FooterTable from "./FooterTable";
+import ModalDeletePackage from "../modals/ModalDeletePackage";
+import ModalHasNotRates from "../modals/ModalHasNotRates";
+import ModalNoCredit from "../modals/ModalNoCredit";
 import ModalFormPackage from "../modals/ModalPackage";
 import ModalPackagesInBatch from "../modals/ModalPackagesInBatch";
-import { Delete, Edit, Help, PictureAsPdf, TableView } from "@mui/icons-material";
-import { validateCreditsAgency, validateHasRates } from "../../utils/agencyValidations";
-import { useAgenciaStore } from "../../zustand/useAgenciaStore";
-import ModalNoCredit from "../modals/ModalNoCredit";
-import ModalHasNotRates from "../modals/ModalHasNotRates";
-import ModalDeletePackage from "../modals/ModalDeletePackage";
-import { exportPDF, exportExcel } from "../../utils/exportTable";
-import { useDateRangeStore } from "../../zustand/useDateRangeStore";
+import DataTable from "./DataTable";
+import FooterTable from "./FooterTable";
 
 export default function TablePackages() {
   const { fechaInicio, fechaFin } = useDateRangeStore();
@@ -40,7 +40,7 @@ export default function TablePackages() {
   const [entity, setEntity] = useState<PaqueteDto>();
   const [packageForDelete, setPackageForDelete] = useState<PaqueteDto>();
   const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>();
-  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts, fetchAllPaquetes } =
+  const { countTotal, allPaquetes, resetPackages, fetchNextPage, fetchCounts } =
     usePaqueteStore();
 
   useEffect(() => {

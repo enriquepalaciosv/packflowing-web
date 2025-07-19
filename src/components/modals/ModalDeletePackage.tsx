@@ -1,9 +1,8 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import Modal from "./Modal";
-import { deletePackage, PaqueteDto } from "../../firebase/firestore/paquetes";
 import { toast } from "react-toastify";
+import { deletePackage, PaqueteDto } from "../../firebase/firestore/paquetes";
 import { usePaqueteStore } from "../../zustand/usePaquetesStore";
+import Modal from "./Modal";
 
 export default function ModalDeletePackage({
     isOpen,
